@@ -11,7 +11,7 @@ export default class RapidScrollView extends cc.Component {
 
     @property({
         type: cc.Enum(RapidItemTemplateType),
-        toolTip: CC_DEV && "Item模板模式"
+        tooltip: CC_DEV && "Item模板模式"
     })
     protected itemTemplateType: RapidItemTemplateType = RapidItemTemplateType.NODE;
 
@@ -33,11 +33,23 @@ export default class RapidScrollView extends cc.Component {
     })
     protected itemTemplatePrefab: cc.Prefab = null;
 
+    @property(RapidRollDirection)
+    private _rollDirectionType: RapidRollDirection = RapidRollDirection.VERTICAL;
+
     @property({
         type: cc.Enum(RapidRollDirection),
-        toolTip: CC_DEV && "列表滚动方向"
+        tooltip: CC_DEV && "列表滚动方向"
     })
-    protected rollDirectionType: RapidRollDirection = RapidRollDirection.VERTICAL;
+    protected set rollDirectionType(val: RapidRollDirection) {
+        this._rollDirectionType = val;
+
+        let scrollView = this.node.getComponent(cc.ScrollView);
+        scrollView.vertical = val === RapidRollDirection.VERTICAL;
+        scrollView.horizontal = val === RapidRollDirection.HORIZONTAL;
+    }
+    protected get rollDirectionType(): RapidRollDirection {
+        return this._rollDirectionType;
+    }
 
     public rapidLayout: RapidLayout;
     public rapidData: RapidData;

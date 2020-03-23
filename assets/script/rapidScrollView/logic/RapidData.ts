@@ -57,7 +57,7 @@ export default class RapidData extends RapidBase {
 
         this.layoutData.viewHeight = isVertical ? this.node.height : this.node.width;
         this.layoutData.viewHeightNum = Math.ceil((this.layoutData.viewHeight + this.layoutData.spacingY - (isVertical ? this.layout.paddingTop : this.layout.paddingLeft)) / (this.layoutData.itemHeight + this.layoutData.spacingY)) + 1;
-        this.layoutData.showItemNum = this.layoutData.rowItemNum * this.layoutData.viewHeightNum;
+        this.layoutData.showItemNum = Math.min(this.layoutData.rowItemNum * this.layoutData.viewHeightNum, dataLength);
 
         this.layoutData.isPositiveDirection = (isVertical && this.layout.verticalDirection === cc.Layout.VerticalDirection.TOP_TO_BOTTOM) ||
             (!isVertical && this.layout.horizontalDirection === cc.Layout.HorizontalDirection.LEFT_TO_RIGHT);
@@ -95,23 +95,30 @@ export default class RapidData extends RapidBase {
         let isVertical = this.rapidScrollView.getRollDirectionType() === RapidRollDirection.VERTICAL;
         let pox: number, poy: number;
 
+
+            let paddingStart = this.layoutData.paddingHorizontalStart;
+
+        pox = -this.layoutData.contentWidth / 2 + (paddingStart + itemNodeSize.width / 2) +  (this.layout.spacingX + this.layoutData.itemWidth) * (index % this.layoutData.rowItemNum);
+        poy = this.layoutData.paddingVerticalStart + itemNodeSize.height / 2 + (this.layout.spacingY + this.layoutData.itemHeight) * Math.floor(index / this.layoutData.rowItemNum);
+
         if(this.layout.type !== cc.Layout.Type.GRID){
             pox = 0;
         }
         else {
-            let paddingStart = this.layoutData.paddingHorizontalStart;
-
-            pox = -this.layoutData.contentWidth / 2 + (paddingStart + itemNodeSize.width / 2) +  (this.layout.spacingX + this.layoutData.itemWidth) * (index % this.layoutData.rowItemNum);
-            this.layout.horizontalDirection === cc.Layout.HorizontalDirection.RIGHT_TO_LEFT && (pox = -pox)
+            if(isVertical) {
+                this.layout.horizontalDirection === cc.Layout.HorizontalDirection.RIGHT_TO_LEFT && (pox = -pox);
+                this.layout.verticalDirection === cc.Layout.VerticalDirection.BOTTOM_TO_TOP && (poy = this.layoutData.contentHeight - poy);
+            }
+            else {
+                this.layout.verticalDirection === cc.Layout.VerticalDirection.BOTTOM_TO_TOP && (pox = -pox);
+                this.layout.horizontalDirection === cc.Layout.HorizontalDirection.RIGHT_TO_LEFT && (poy = this.layoutData.contentHeight - poy);
+            }
         }
-
-        poy = this.layoutData.paddingVerticalStart + itemNodeSize.height / 2 + (this.layout.spacingY + this.layoutData.itemHeight) * Math.floor(index / this.layoutData.rowItemNum);
-        this.layout.verticalDirection === cc.Layout.VerticalDirection.BOTTOM_TO_TOP && (poy = this.layoutData.contentHeight - poy);
 
 
         this.itemDataArray[index] = {
             index: index,
-            position: cc.v2(pox, -poy),
+            position: isVertical ? cc.v2(pox, -poy) : cc.v2(poy, -pox),
             itemData: this.dataArray[index]
         } as RapidItemData;
 

@@ -27,7 +27,7 @@ export default class Main extends cc.Component {
 
         this.rapidScrollView.init();
 
-        let i = 1, len = 21;
+        let i = 1, len = 20;
 
         while (i < len) {
             this.rankArray.push(this.createRankData(i));

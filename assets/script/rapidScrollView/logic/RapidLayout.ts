@@ -76,14 +76,14 @@ export default class RapidLayout extends RapidBase {
         let itemIndex = Number(itemKeyArray[isPositive ? 0 : itemKeyArray.length - 1]);
 
         // * 2 多加一行屏幕外预加载
-        let showRange = (this.node.height + layoutData.itemHeight * 2 + layoutData.spacingY) / 2;
+        let showRange = (layoutData.viewHeight + layoutData.itemHeight * 2 + layoutData.spacingY) / 2;
 
         // 检测是否在屏幕内
         let checkIsInViewFunc = (node: cc.Node): boolean => {
             let itemWorldPos = node.convertToWorldSpaceAR(cc.v2(0, 0));
             let differPos = itemWorldPos.sub(this.viewWorldPos);
             let differ = Math.floor(Math.abs(this.rapidScrollView.getRollDirectionType() === RapidRollDirection.VERTICAL ? differPos.y : differPos.x));
-            // cc.log(node.getComponent(RapidItemBase).getIndex(), itemWorldPos, differPos, differ, showRange);
+            // cc.warn(node.getComponent(RapidItemBase).getIndex(), itemWorldPos, differPos, differ, showRange);
 
             return differ <= showRange;
         };
@@ -104,8 +104,6 @@ export default class RapidLayout extends RapidBase {
 
                 isPositive ? showIndex++ : showIndex--;
             }
-
-            // cc.log("show index", showIndex);
         };
 
         while (this.showItemMap[itemIndex] && !checkIsInViewFunc(this.showItemMap[itemIndex].node)) {
@@ -125,7 +123,7 @@ export default class RapidLayout extends RapidBase {
         if (differPosition.mag() > 10) {
             this.contentPastPos = this.content.position;
 
-            let isPositive = differPosition.x > 0 || differPosition.y > 0;
+            let isPositive = differPosition.x < 0 || differPosition.y > 0;
             this.checkItemPosition(isPositive);
         }
     }
