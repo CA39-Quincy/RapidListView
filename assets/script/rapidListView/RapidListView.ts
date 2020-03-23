@@ -1,13 +1,13 @@
-import RapidLayout from "./RapidLayout";
-import RapidData from "./RapidData";
-import RapidNodePool from "./RapidNodePool";
-import {RapidItemTemplateType, RapidRollDirection, RapidToPositionType} from "../enum/RapidEnum";
-import RapidItemBase from "../base/RapidItemBase";
+import RapidScroll from "./logic/RapidScroll";
+import RapidData from "./logic/RapidData";
+import RapidNodePool from "./logic/RapidNodePool";
+import {RapidItemTemplateType, RapidRollDirection, RapidToPositionType} from "./enum/RapidEnum";
+import RapidItemBase from "./base/RapidItemBase";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class RapidScrollView extends cc.Component {
+export default class RapidListView extends cc.Component {
 
     @property({
         type: cc.Enum(RapidItemTemplateType),
@@ -51,24 +51,25 @@ export default class RapidScrollView extends cc.Component {
         return this._rollDirectionType;
     }
 
-    public rapidLayout: RapidLayout;
+    public rapidScroll: RapidScroll;
     public rapidData: RapidData;
     public rapidNodePool: RapidNodePool;
+
 
     init() {
         this.rapidData = this.node.addComponent(RapidData);
         this.rapidNodePool = this.node.addComponent(RapidNodePool);
-        this.rapidLayout = this.node.addComponent(RapidLayout);
+        this.rapidScroll = this.node.addComponent(RapidScroll);
 
         this.rapidData.init(this);
         this.rapidNodePool.init(this);
-        this.rapidLayout.init(this);
+        this.rapidScroll.init(this);
     }
 
 
     updateData(itemDataArray: any[], toPosition: RapidToPositionType) {
         this.rapidData.updateDataArray(itemDataArray);
-        this.rapidLayout.updateLayout(toPosition);
+        this.rapidScroll.updateLayout(toPosition);
     }
 
     getItemTemplate(): cc.Node | cc.Prefab | any {
@@ -90,7 +91,6 @@ export default class RapidScrollView extends cc.Component {
     getRollDirectionType(): RapidRollDirection {
         return this.rollDirectionType;
     }
-
 
     // update (dt) {}
 }

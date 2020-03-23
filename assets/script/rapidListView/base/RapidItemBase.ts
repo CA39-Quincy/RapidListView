@@ -19,8 +19,6 @@ export default class RapidItemBase extends cc.Component {
 
     }
 
-
-
     show(itemData: RapidItemData, layerParentArray: cc.Node[]) {
         this.rapidItemData = itemData;
 

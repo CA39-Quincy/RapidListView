@@ -17,7 +17,7 @@ export default class RapidNodePool extends RapidBase {
     }
 
     get() {
-        return this.itemNodePool.size() > 0 ? this.itemNodePool.get() : cc.instantiate(this.rapidScrollView.getItemTemplate());
+        return this.itemNodePool.size() > 0 ? this.itemNodePool.get() : cc.instantiate(this.rapidListView.getItemTemplate());
     }
 
     put(node: cc.Node) {

@@ -31,9 +31,9 @@ export default class RapidData extends RapidBase {
         this.dataArray = dataArray;
 
 
-        let itemNode = this.rapidScrollView.getItemTemplateNode();
+        let itemNode = this.rapidListView.getItemTemplateNode();
         let dataLength = this.dataArray.length;
-        let isVertical = this.rapidScrollView.getRollDirectionType() === RapidRollDirection.VERTICAL;
+        let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
 
         this.layoutData = {} as RapidLayoutData;
 
@@ -91,8 +91,8 @@ export default class RapidData extends RapidBase {
             return this.itemDataArray[index];
         }
 
-        let itemNodeSize = this.rapidScrollView.getItemTemplateNode().getContentSize();
-        let isVertical = this.rapidScrollView.getRollDirectionType() === RapidRollDirection.VERTICAL;
+        let itemNodeSize = this.rapidListView.getItemTemplateNode().getContentSize();
+        let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
         let pox: number, poy: number;
 
 

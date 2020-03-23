@@ -2544,7 +2544,7 @@
       "__id__": 2
     },
     "_enabled": true,
-    "rapidScrollView": {
+    "rapidListView": {
       "__id__": 37
     },
     "testScrollView": {

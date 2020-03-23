@@ -1,5 +1,5 @@
 
-import RapidItemBase from "./rapidScrollView/base/RapidItemBase";
+import RapidItemBase from "./rapidListView/base/RapidItemBase";
 import {RankData} from "./TestData";
 
 const {ccclass, property} = cc._decorator;

@@ -1,14 +1,14 @@
-import RapidScrollView from "./rapidScrollView/logic/RapidScrollView";
+import RapidListView from "./rapidListView/RapidListView";
 import {RankData} from "./TestData";
-import {RapidToPositionType} from "./rapidScrollView/enum/RapidEnum";
+import {RapidToPositionType} from "./rapidListView/enum/RapidEnum";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class Main extends cc.Component {
 
-    @property(RapidScrollView)
-    rapidScrollView: RapidScrollView = null;
+    @property(RapidListView)
+    rapidListView: RapidListView = null;
 
     @property(cc.ScrollView)
     testScrollView: cc.ScrollView = null;
@@ -25,7 +25,7 @@ export default class Main extends cc.Component {
 
         this.addItem.on("click", this.onClickAddItem, this);
 
-        this.rapidScrollView.init();
+        this.rapidListView.init();
 
         let i = 1, len = 20;
 
@@ -35,7 +35,7 @@ export default class Main extends cc.Component {
             i++;
         }
 
-        this.rapidScrollView.updateData(this.rankArray, RapidToPositionType.TOP);
+        this.rapidListView.updateData(this.rankArray, RapidToPositionType.TOP);
     }
 
     createRankData(index): RankData {

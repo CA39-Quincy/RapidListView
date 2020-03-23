@@ -5,7 +5,7 @@ import {RapidRollDirection, RapidToPositionType} from "../enum/RapidEnum";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class RapidLayout extends RapidBase {
+export default class RapidScroll extends RapidBase {
 
     private scrollView: cc.ScrollView = null;
     private content: cc.Node = null;
@@ -35,7 +35,7 @@ export default class RapidLayout extends RapidBase {
     }
 
     private createLayer() {
-        let rapidItem: RapidItemBase = this.rapidScrollView.getItemTemplateScript();
+        let rapidItem: RapidItemBase = this.rapidListView.getItemTemplateScript();
         let itemLayers: cc.Node[] = rapidItem.getLayerArray();
 
         for (let i = 0, len = itemLayers.length; i < len; i++) {
@@ -49,10 +49,10 @@ export default class RapidLayout extends RapidBase {
 
     private itemShow(index: number) {
         // cc.log("item show", index);
-        let itemNode = this.rapidScrollView.rapidNodePool.get();
+        let itemNode = this.rapidListView.rapidNodePool.get();
         let itemScript = itemNode.getComponent(RapidItemBase);
 
-        itemScript.show(this.rapidScrollView.rapidData.getItemData(index), this.layerArray);
+        itemScript.show(this.rapidListView.rapidData.getItemData(index), this.layerArray);
         this.showItemMap[index] = itemScript;
     }
 
@@ -60,7 +60,7 @@ export default class RapidLayout extends RapidBase {
         let item: RapidItemBase = this.showItemMap[index];
         item.hide();
 
-        this.rapidScrollView.rapidNodePool.put(item.node);
+        this.rapidListView.rapidNodePool.put(item.node);
         delete this.showItemMap[index];
     }
 
@@ -70,7 +70,7 @@ export default class RapidLayout extends RapidBase {
      */
     private checkItemPosition(isPositive: boolean) {
         let itemKeyArray = Object.keys(this.showItemMap);
-        let layoutData: RapidLayoutData = this.rapidScrollView.rapidData.layoutData;
+        let layoutData: RapidLayoutData = this.rapidListView.rapidData.layoutData;
 
         isPositive = (isPositive && layoutData.isPositiveDirection) || (!isPositive && !layoutData.isPositiveDirection);
         let itemIndex = Number(itemKeyArray[isPositive ? 0 : itemKeyArray.length - 1]);
@@ -82,7 +82,7 @@ export default class RapidLayout extends RapidBase {
         let checkIsInViewFunc = (node: cc.Node): boolean => {
             let itemWorldPos = node.convertToWorldSpaceAR(cc.v2(0, 0));
             let differPos = itemWorldPos.sub(this.viewWorldPos);
-            let differ = Math.floor(Math.abs(this.rapidScrollView.getRollDirectionType() === RapidRollDirection.VERTICAL ? differPos.y : differPos.x));
+            let differ = Math.floor(Math.abs(this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL ? differPos.y : differPos.x));
             // cc.warn(node.getComponent(RapidItemBase).getIndex(), itemWorldPos, differPos, differ, showRange);
 
             return differ <= showRange;
@@ -91,7 +91,7 @@ export default class RapidLayout extends RapidBase {
         let checkShowItemFunc = (index: number) => {
             let showIndex = index + (isPositive ? 1 : -1);
 
-            while (showIndex >= 0 && showIndex < this.rapidScrollView.rapidData.getDataLength()) {
+            while (showIndex >= 0 && showIndex < this.rapidListView.rapidData.getDataLength()) {
                 if(!this.showItemMap[showIndex]){
                     this.itemShow(showIndex);
 
@@ -129,11 +129,11 @@ export default class RapidLayout extends RapidBase {
     }
 
     updateLayout(toPosition: RapidToPositionType) {
-        let isVertical = this.rapidScrollView.getRollDirectionType() === RapidRollDirection.VERTICAL;
-        let layoutData: RapidLayoutData = this.rapidScrollView.rapidData.layoutData;
+        let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
+        let layoutData: RapidLayoutData = this.rapidListView.rapidData.layoutData;
         isVertical ? (this.content.height = layoutData.contentHeight) : (this.content.width = layoutData.contentHeight);
 
-        let showIndex = layoutData.isPositiveDirection ? 0 : this.rapidScrollView.rapidData.getDataLength() - 1;
+        let showIndex = layoutData.isPositiveDirection ? 0 : this.rapidListView.rapidData.getDataLength() - 1;
 
         for (let i = 0; i < layoutData.showItemNum; i++) {
             this.itemShow(showIndex);
