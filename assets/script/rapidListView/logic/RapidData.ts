@@ -85,6 +85,20 @@ export default class RapidData extends RapidBase {
         this.dataArray[index] = data;
     }
 
+    updateItemSize(index:number, size: cc.Size) {
+        let lastItemData: RapidItemData = this.itemDataArray[index - 1];
+        let itemData: RapidItemData = this.itemDataArray[index];
+        let lastItemHeight = index === 0 ? 0 : lastItemData.size.height;
+        let lastItemPos = index === 0 ? cc.v2(0, this.layoutData.paddingVerticalStart) : lastItemData.position;
+        let newPos = cc.v2(itemData.position.x, lastItemPos.y - this.layoutData.spacingY - (size.height + lastItemHeight) / 2);
+
+        let sizeDiffer = itemData.size.height - size.height;
+        this.layoutData.contentHeight -= sizeDiffer;
+
+        itemData.position = newPos;
+        itemData.size = size;
+    }
+
     getItemData(index: number): RapidItemData {
         if(this.itemDataArray[index]) {
 
@@ -95,9 +109,7 @@ export default class RapidData extends RapidBase {
         let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
         let pox: number, poy: number;
 
-
-            let paddingStart = this.layoutData.paddingHorizontalStart;
-
+        let paddingStart = this.layoutData.paddingHorizontalStart;
         pox = -this.layoutData.contentWidth / 2 + (paddingStart + itemNodeSize.width / 2) +  (this.layout.spacingX + this.layoutData.itemWidth) * (index % this.layoutData.rowItemNum);
         poy = this.layoutData.paddingVerticalStart + itemNodeSize.height / 2 + (this.layout.spacingY + this.layoutData.itemHeight) * Math.floor(index / this.layoutData.rowItemNum);
 
@@ -115,10 +127,12 @@ export default class RapidData extends RapidBase {
             }
         }
 
+        let itemNode = this.rapidListView.getItemTemplateNode();
 
         this.itemDataArray[index] = {
             index: index,
             position: isVertical ? cc.v2(pox, -poy) : cc.v2(poy, -pox),
+            size: itemNode.getContentSize(),
             itemData: this.dataArray[index]
         } as RapidItemData;
 

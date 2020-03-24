@@ -2,6 +2,67 @@ import RapidListView from "./rapidListView/RapidListView";
 import {RankData} from "./TestData";
 import {RapidToPositionType} from "./rapidListView/enum/RapidEnum";
 
+const CHAT_LIST = [
+    {
+        text: "循环列表"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+    {
+        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
+    },
+
+];
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -27,7 +88,7 @@ export default class Main extends cc.Component {
 
         this.rapidListView.init();
 
-        let i = 1, len = 20;
+        let i = 0, len = CHAT_LIST.length;
 
         while (i < len) {
             this.rankArray.push(this.createRankData(i));
@@ -43,6 +104,7 @@ export default class Main extends cc.Component {
         return {
             rank: index,
             name: "玩家" + index,
+            text: CHAT_LIST[index],
             iconPath: "",
         } as RankData;
     }

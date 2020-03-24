@@ -9,7 +9,11 @@ export default class RapidItemBase extends cc.Component {
 
     protected rapidItemData: RapidItemData = null;
 
+    sizeChangeCallFunc: Function = null;
 
+    protected onSizeChange() {
+        this.sizeChangeCallFunc && this.sizeChangeCallFunc(this.rapidItemData.index, this.node.getContentSize());
+    }
 
     protected onShow() {
 
@@ -36,7 +40,16 @@ export default class RapidItemBase extends cc.Component {
             this.layerArray[i].parent = this.node;
         }
 
+        this.sizeChangeCallFunc = null;
         this.onHide();
+    }
+
+    updatePosition(itemData: RapidItemData) {
+        this.rapidItemData = itemData;
+        for(let i = 0; i < this.layerArray.length; i++) {
+            let node = i === 0 ? this.node : this.layerArray[i];
+            node.setPosition(itemData.position);
+        }
     }
 
     getLayerArray(): cc.Node[] {
@@ -49,6 +62,10 @@ export default class RapidItemBase extends cc.Component {
 
     getIndex(): number {
         return this.rapidItemData.index;
+    }
+
+    addListenSizeChange(callFunc: Function) {
+        this.sizeChangeCallFunc = callFunc;
     }
 }
 

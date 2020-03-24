@@ -40,21 +40,39 @@ export default class RapidListView extends cc.Component {
         type: cc.Enum(RapidRollDirection),
         tooltip: CC_DEV && "列表滚动方向"
     })
-    protected set rollDirectionType(val: RapidRollDirection) {
+    set rollDirectionType(val: RapidRollDirection) {
         this._rollDirectionType = val;
 
-        let scrollView = this.node.getComponent(cc.ScrollView);
-        scrollView.vertical = val === RapidRollDirection.VERTICAL;
-        scrollView.horizontal = val === RapidRollDirection.HORIZONTAL;
+        this.updateProperty();
     }
-    protected get rollDirectionType(): RapidRollDirection {
+    get rollDirectionType(): RapidRollDirection {
         return this._rollDirectionType;
     }
+
+    @property({
+        tooltip: CC_DEV && "是否自适应content宽高"
+    })
+    protected isAdaptionSize: boolean = false;
 
     public rapidScroll: RapidScroll;
     public rapidData: RapidData;
     public rapidNodePool: RapidNodePool;
 
+    private updateProperty() {
+        let isVertical = this.rollDirectionType === RapidRollDirection.VERTICAL;
+
+        let scrollView = this.node.getComponent(cc.ScrollView);
+        scrollView.vertical = isVertical;
+        scrollView.horizontal = !isVertical;
+
+        let content = scrollView.content;
+        content.setAnchorPoint(isVertical ? cc.v2(0.5, 1) : cc.v2(0, 0.5));
+        content.setPosition(isVertical ? cc.v2(0, this.node.height / 2) : cc.v2(-this.node.width / 2, 0));
+    }
+
+    resetInEditor() {
+        this.updateProperty();
+    }
 
     init() {
         this.rapidData = this.node.addComponent(RapidData);
@@ -90,6 +108,10 @@ export default class RapidListView extends cc.Component {
 
     getRollDirectionType(): RapidRollDirection {
         return this.rollDirectionType;
+    }
+
+    getIsAdaptionSize(): boolean {
+        return this.isAdaptionSize;
     }
 
     // update (dt) {}
