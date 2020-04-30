@@ -9,11 +9,6 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class RapidListView extends cc.Component {
 
-    @property({
-        type: cc.Enum(RapidItemTemplateType),
-        tooltip: CC_DEV && "Item模板模式"
-    })
-    protected itemTemplateType: RapidItemTemplateType = RapidItemTemplateType.NODE;
 
     // 节点模板
     @property({
@@ -33,6 +28,22 @@ export default class RapidListView extends cc.Component {
     })
     protected itemTemplatePrefab: cc.Prefab = null;
 
+    @property(cc.Enum(RapidItemTemplateType))
+    private _itemTemplateType : RapidItemTemplateType = RapidItemTemplateType.NODE;
+
+    @property({
+        type: cc.Enum(RapidItemTemplateType),
+        tooltip: CC_DEV && "Item模板模式"
+    })
+    protected set itemTemplateType(val: RapidItemTemplateType) {
+        this._itemTemplateType = val;
+        this.itemTemplateNode = null;
+        this.itemTemplatePrefab = null;
+    }
+    protected get itemTemplateType(): RapidItemTemplateType {
+        return this._itemTemplateType;
+    }
+
     @property(RapidRollDirection)
     private _rollDirectionType: RapidRollDirection = RapidRollDirection.VERTICAL;
 
@@ -40,12 +51,12 @@ export default class RapidListView extends cc.Component {
         type: cc.Enum(RapidRollDirection),
         tooltip: CC_DEV && "列表滚动方向"
     })
-    set rollDirectionType(val: RapidRollDirection) {
+    protected set rollDirectionType(val: RapidRollDirection) {
         this._rollDirectionType = val;
 
         this.updateProperty();
     }
-    get rollDirectionType(): RapidRollDirection {
+    protected get rollDirectionType(): RapidRollDirection {
         return this._rollDirectionType;
     }
 
@@ -54,9 +65,16 @@ export default class RapidListView extends cc.Component {
     })
     protected isAdaptionSize: boolean = false;
 
+    private itemEventCallFunc: Function = null;
+
     public rapidScroll: RapidScroll;
     public rapidData: RapidData;
     public rapidNodePool: RapidNodePool;
+
+    private checkAddLayout() {
+        let content = this.node.getComponent(cc.ScrollView).content;
+        !content.getComponent(cc.Layout) && content.addComponent(cc.Layout);
+    }
 
     private updateProperty() {
         let isVertical = this.rollDirectionType === RapidRollDirection.VERTICAL;
@@ -71,6 +89,7 @@ export default class RapidListView extends cc.Component {
     }
 
     resetInEditor() {
+        this.checkAddLayout();
         this.updateProperty();
     }
 
@@ -112,6 +131,18 @@ export default class RapidListView extends cc.Component {
 
     getIsAdaptionSize(): boolean {
         return this.isAdaptionSize;
+    }
+
+    getItemEvent(): Function {
+        return this.itemEventCallFunc;
+    }
+
+    scrollToBottom(time: number) {
+        this.rapidScroll.scrollToBottom(time);
+    }
+
+    addListenItemEvent(callFunc: Function) {
+        this.itemEventCallFunc = callFunc;
     }
 
     // update (dt) {}

@@ -22,6 +22,8 @@ export default class RapidData extends RapidBase {
     private itemDataArray: RapidItemData[] = [];
     private dataArray: any[] = [];
 
+    private updateItemIndex: number = 0;
+
     protected onInit() {
         this.content = this.node.getComponent(cc.ScrollView).content;
         this.layout = this.content.getComponent(cc.Layout);
@@ -39,6 +41,9 @@ export default class RapidData extends RapidBase {
 
         this.layoutData.itemWidth = isVertical ? itemNode.width : itemNode.height;
         this.layoutData.itemHeight = isVertical ? itemNode.height : itemNode.width;
+
+        this.layoutData.itemAnchorX = isVertical ? itemNode.anchorX : itemNode.anchorY;
+        this.layoutData.itemAnchorY = isVertical ? itemNode.anchorY : itemNode.anchorX;
 
         this.layoutData.spacingX = isVertical ? this.layout.spacingX : this.layout.spacingY;
         this.layoutData.spacingY = isVertical ? this.layout.spacingY : this.layout.spacingX;
@@ -86,37 +91,50 @@ export default class RapidData extends RapidBase {
     }
 
     updateItemSize(index:number, size: cc.Size) {
-        let lastItemData: RapidItemData = this.itemDataArray[index - 1];
+        if(index !== this.updateItemIndex) {
+            return
+        }
+        this.updateItemIndex = index;
+
+        if(index === this.itemDataArray.length - 1){
+            this.updateItemIndex = this.itemDataArray.length;
+        }
+
         let itemData: RapidItemData = this.itemDataArray[index];
-        let lastItemHeight = index === 0 ? 0 : lastItemData.size.height;
-        let lastItemPos = index === 0 ? cc.v2(0, this.layoutData.paddingVerticalStart) : lastItemData.position;
-        let newPos = cc.v2(itemData.position.x, lastItemPos.y - this.layoutData.spacingY - (size.height + lastItemHeight) / 2);
-
-        let sizeDiffer = itemData.size.height - size.height;
-        this.layoutData.contentHeight -= sizeDiffer;
-
-        itemData.position = newPos;
-        itemData.size = size;
+        let sizeDiffer = itemData.size.height - this.layoutData.itemHeight;
+        this.layoutData.contentHeight += sizeDiffer;
     }
 
     getItemData(index: number): RapidItemData {
-        if(this.itemDataArray[index]) {
+        if(index < 0) {
+            return null;
+        }
 
+        if(this.itemDataArray[index]) {
             return this.itemDataArray[index];
         }
 
-        let itemNodeSize = this.rapidListView.getItemTemplateNode().getContentSize();
         let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
         let pox: number, poy: number;
 
         let paddingStart = this.layoutData.paddingHorizontalStart;
-        pox = -this.layoutData.contentWidth / 2 + (paddingStart + itemNodeSize.width / 2) +  (this.layout.spacingX + this.layoutData.itemWidth) * (index % this.layoutData.rowItemNum);
-        poy = this.layoutData.paddingVerticalStart + itemNodeSize.height / 2 + (this.layout.spacingY + this.layoutData.itemHeight) * Math.floor(index / this.layoutData.rowItemNum);
+        pox = -this.layoutData.contentWidth / 2 + (paddingStart + this.layoutData.itemWidth * (1 - this.layoutData.itemAnchorX)) +  (this.layout.spacingX + this.layoutData.itemWidth) * (index % this.layoutData.rowItemNum);
 
         if(this.layout.type !== cc.Layout.Type.GRID){
             pox = 0;
+            if(index === 0){
+                poy = this.layoutData.paddingVerticalStart + this.layoutData.itemHeight * (1 - this.layoutData.itemAnchorY);
+            }
+            else{
+                let lastData = this.itemDataArray[index - 1];
+                poy = -lastData.position.y + lastData.size.height + this.layoutData.spacingY;
+
+                // this.layoutData.contentHeight += lastData.size.height - this.layoutData.itemHeight;
+            }
         }
         else {
+            // 上下起始充填量 + item高 * (1 - 锚点Y) + (y轴间隔 + item高) * 所在行
+            poy = this.layoutData.paddingVerticalStart + this.layoutData.itemHeight * (1 - this.layoutData.itemAnchorY) + (this.layout.spacingY + this.layoutData.itemHeight) * Math.floor(index / this.layoutData.rowItemNum);
             if(isVertical) {
                 this.layout.horizontalDirection === cc.Layout.HorizontalDirection.RIGHT_TO_LEFT && (pox = -pox);
                 this.layout.verticalDirection === cc.Layout.VerticalDirection.BOTTOM_TO_TOP && (poy = this.layoutData.contentHeight - poy);

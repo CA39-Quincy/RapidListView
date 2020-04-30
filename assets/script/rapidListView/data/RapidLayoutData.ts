@@ -1,6 +1,8 @@
 interface RapidLayoutData {
     itemWidth: number,
     itemHeight: number,
+    itemAnchorX: number,
+    itemAnchorY: number,
     spacingX: number,
     spacingY: number,
     // 左右两边充填量

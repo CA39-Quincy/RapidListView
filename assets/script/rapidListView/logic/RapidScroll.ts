@@ -12,7 +12,7 @@ export default class RapidScroll extends RapidBase {
     private layout: cc.Layout = null;
 
     private layerArray: cc.Node[] = [];
-    private showItemMap: {[key: string]: RapidItemBase} = Object.create(null);
+    private showItemMap: { [key: string]: RapidItemBase } = Object.create(null);
 
     private viewWorldPos: cc.Vec2 = cc.v2(0, 0);
     private contentPastPos: cc.Vec2 = cc.v2(0, 0);
@@ -55,7 +55,7 @@ export default class RapidScroll extends RapidBase {
 
     private onItemSizeChange(index: number, itemSize: cc.Size) {
         this.rapidListView.rapidData.updateItemSize(index, itemSize);
-        this.showItemMap[index].updatePosition(this.rapidListView.rapidData.getItemData(index));
+        // this.showItemMap[index].updatePosition(this.rapidListView.rapidData.getItemData(index));
         this.content.height = this.rapidListView.rapidData.layoutData.contentHeight;
     }
 
@@ -65,7 +65,7 @@ export default class RapidScroll extends RapidBase {
 
         this.showItemMap[index] = itemScript;
         this.rapidListView.getIsAdaptionSize() && itemScript.addListenSizeChange(this.onItemSizeChange.bind(this));
-        itemScript.show(this.rapidListView.rapidData.getItemData(index), this.layerArray);
+        itemScript.show(this.rapidListView.rapidData.getItemData(index), this.layerArray, this.rapidListView.getItemEvent());
     }
 
     private itemHide(index: number) {
@@ -89,9 +89,9 @@ export default class RapidScroll extends RapidBase {
 
         // 检测是否在屏幕内
         let checkIsInViewFunc = (node: cc.Node): boolean => {
-            let itemHeight = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL ? node.height : node.width;
+            let itemHeight = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL ? node.height * node.anchorY : node.width * node.anchorX;
             // * 2 多加一行屏幕外预加载
-            let showRange = (layoutData.viewHeight + itemHeight + layoutData.spacingY) / 2;
+            let showRange = itemHeight + (layoutData.viewHeight + layoutData.spacingY) / 2;
 
             let itemWorldPos = node.convertToWorldSpaceAR(cc.v2(0, 0));
             let differPos = itemWorldPos.sub(this.viewWorldPos);
@@ -107,7 +107,7 @@ export default class RapidScroll extends RapidBase {
             while (showIndex >= 0 && showIndex < this.rapidListView.rapidData.getDataLength()) {
                 !this.showItemMap[showIndex] && this.itemShow(showIndex);
 
-                if(!checkIsInViewFunc(this.showItemMap[showIndex].node)){
+                if (!checkIsInViewFunc(this.showItemMap[showIndex].node)) {
 
                     break;
                 }
@@ -150,5 +150,9 @@ export default class RapidScroll extends RapidBase {
 
             layoutData.isPositiveDirection ? showIndex++ : showIndex--;
         }
+    }
+
+    scrollToBottom(time: number) {
+        this.scrollView.scrollToBottom(time);
     }
 }

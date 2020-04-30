@@ -1,67 +1,7 @@
 import RapidListView from "./rapidListView/RapidListView";
-import {RankData} from "./TestData";
 import {RapidToPositionType} from "./rapidListView/enum/RapidEnum";
 
-const CHAT_LIST = [
-    {
-        text: "循环列表"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
-    {
-        text: "RapidListView<color=#cc6600>循环列表</color>RapidListViewRapidListViewRapidListView\n<size=40><color=#66ffcc>循环列表</color></size>"
-    },
 
-];
 
 const {ccclass, property} = cc._decorator;
 
@@ -69,73 +9,74 @@ const {ccclass, property} = cc._decorator;
 export default class Main extends cc.Component {
 
     @property(RapidListView)
-    rapidListView: RapidListView = null;
-
-    @property(cc.ScrollView)
-    testScrollView: cc.ScrollView = null;
+    menuRapidListView: RapidListView = null;
 
     @property(cc.Node)
-    addItem: cc.Node = null;
+    view: cc.Node = null;
 
-    private rankArray: RankData[] = [];
+    @property(cc.Node)
+    back: cc.Node = null;
+
+    @property(cc.Node)
+    menu: cc.Node = null;
+
+    @property(cc.Prefab)
+    viewArray: cc.Prefab[] = [];
+
+    private viewMap: Object = Object.create(null);
+    private showIndex: number = null;
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
         window.mainScene = this;
+        this.back.active = false;
 
-        this.addItem.on("click", this.onClickAddItem, this);
+        this.menuRapidListView.init();
+        this.menuRapidListView.addListenItemEvent(this.onItemEvent.bind(this));
 
-        this.rapidListView.init();
+        let buttonList = [
+            {text: "垂直滚动列表"},
+            {text: "水平滚动列表"},
+            {text: "好友（从上往下滚动）"}
+        ];
 
-        let i = 0, len = CHAT_LIST.length;
+        this.menuRapidListView.updateData(buttonList, RapidToPositionType.TOP);
+    }
 
-        while (i < len) {
-            this.rankArray.push(this.createRankData(i));
+    onEnable() {
+        this.back.on("click", this.onClickBack, this);
+    }
 
-            i++;
+    onDisable() {
+        this.back.off("click", this.onClickBack, this);
+    }
+
+    onItemEvent(type, data) {
+        cc.log("item event ", type, data);
+        this.showView(data);
+    }
+
+    showView(index) {
+        let node = this.viewMap[index];
+
+        if(!node) {
+            node = cc.instantiate(this.viewArray[index]);
+            this.view.addChild(node);
+
+            this.viewMap[index] = node;
         }
 
-        this.rapidListView.updateData(this.rankArray, RapidToPositionType.TOP);
+        this.showIndex = index;
+        this.back.active = node.active = true;
+        this.menu.active = false;
     }
 
-    createRankData(index): RankData {
-
-        return {
-            rank: index,
-            name: "玩家" + index,
-            text: CHAT_LIST[index],
-            iconPath: "",
-        } as RankData;
+    onClickBack() {
+        this.back.active = this.viewMap[this.showIndex].active = false;
+        this.menu.active = true;
     }
 
-    start () {
-        this.updateItemIndex();
-    }
-
-    onClickAddItem() {
-        this.addContentChild();
-    }
-
-    addContentChild() {
-        let content = this.testScrollView.content;
-        let node = cc.instantiate(content.children[0]);
-        content.addChild(node);
-
-
-        this.updateItemIndex();
-    }
-
-    updateItemIndex() {
-        this.testScrollView.stopAutoScroll();
-        this.testScrollView.scrollToBottom();
-
-        let itemArray = this.testScrollView.content.children;
-
-        itemArray.forEach((element, index) => {
-            element.getChildByName("Label").getComponent(cc.Label).string = index + "";
-        })
-    }
 
     // update (dt) {}
 }
