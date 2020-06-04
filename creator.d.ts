@@ -8113,7 +8113,10 @@ declare namespace cc {
 		the bounding box of the node, preventing the input from penetrating into the underlying node.
 		!#zh
 		选中此选项后，RichText 将阻止节点边界框中的所有输入事件（鼠标和触摸），从而防止输入事件穿透到底层节点。 */
-		handleTouchEvent: boolean;	
+		handleTouchEvent: boolean;
+        /** !#en
+         !#zh 富文本的行数 */
+        _lineCount: number;
 	}	
 	/** !#en
 	The Scrollbar control allows the user to scroll an image or other view that is too large to see completely

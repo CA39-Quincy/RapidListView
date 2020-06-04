@@ -130,6 +130,8 @@ export default class RapidScroll extends RapidBase {
     private onRollEvent() {
         let differPosition = this.content.position.sub(this.contentPastPos);
 
+        // cc.log("rrrrrrr", this.content.position, this.content.height);
+
         if (differPosition.mag() > 10) {
             this.contentPastPos = this.content.position;
 
@@ -154,5 +156,11 @@ export default class RapidScroll extends RapidBase {
 
     scrollToBottom(time: number) {
         this.scrollView.scrollToBottom(time);
+
+        this.scheduleOnce(() => {
+            if(this.content.y + this.node.height < this.content.height) {
+                this.scrollToBottom(time);
+            }
+        })
     }
 }

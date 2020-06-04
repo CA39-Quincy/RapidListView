@@ -114,6 +114,8 @@ export default class RapidData extends RapidBase {
             return this.itemDataArray[index];
         }
 
+        cc.log("创建item", index);
+
         let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
         let pox: number, poy: number;
 
