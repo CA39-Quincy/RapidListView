@@ -29,6 +29,8 @@ export default class RapidItemBase extends cc.Component {
     }
 
     show(itemData: RapidItemData, layerParentArray: cc.Node[], eventCallFunc: Function) {
+        // cc.log("Item show data", itemData);
+
         this.rapidItemData = itemData;
         this.itemEventCallFunc = eventCallFunc;
         this.onShow();

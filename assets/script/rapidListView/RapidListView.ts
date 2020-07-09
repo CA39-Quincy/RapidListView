@@ -71,6 +71,7 @@ export default class RapidListView extends cc.Component {
     public rapidData: RapidData;
     public rapidNodePool: RapidNodePool;
 
+
     private checkAddLayout() {
         let content = this.node.getComponent(cc.ScrollView).content;
         !content.getComponent(cc.Layout) && content.addComponent(cc.Layout);
@@ -94,6 +95,8 @@ export default class RapidListView extends cc.Component {
     }
 
     init() {
+        this.itemTemplateNode && (this.itemTemplateNode.active = false);
+
         this.rapidData = this.node.addComponent(RapidData);
         this.rapidNodePool = this.node.addComponent(RapidNodePool);
         this.rapidScroll = this.node.addComponent(RapidScroll);
@@ -104,9 +107,9 @@ export default class RapidListView extends cc.Component {
     }
 
 
-    updateData(itemDataArray: any[], toPosition: RapidToPositionType) {
+    updateData(itemDataArray: any[], toPositionType: RapidToPositionType) {
         this.rapidData.updateDataArray(itemDataArray);
-        this.rapidScroll.updateLayout(toPosition);
+        this.rapidScroll.updateLayout(toPositionType);
     }
 
     getItemTemplate(): cc.Node | cc.Prefab | any {

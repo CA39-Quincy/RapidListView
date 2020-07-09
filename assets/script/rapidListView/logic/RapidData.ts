@@ -114,7 +114,8 @@ export default class RapidData extends RapidBase {
             return this.itemDataArray[index];
         }
 
-        cc.log("创建item", index);
+
+        // cc.log("创建item", index);
 
         let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
         let pox: number, poy: number;
@@ -129,7 +130,7 @@ export default class RapidData extends RapidBase {
             }
             else{
                 let lastData = this.itemDataArray[index - 1];
-                poy = -lastData.position.y + lastData.size.height + this.layoutData.spacingY;
+                poy = (isVertical ? (-lastData.position.y + lastData.size.height) : (lastData.position.x + lastData.size.width)) + this.layoutData.spacingY;
 
                 // this.layoutData.contentHeight += lastData.size.height - this.layoutData.itemHeight;
             }
