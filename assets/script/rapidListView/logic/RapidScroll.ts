@@ -167,6 +167,7 @@ export default class RapidScroll extends RapidBase {
         for (let i = 0; i < layoutData.showItemNum; i++) {
             this.itemShow(showIndex);
 
+
             // layoutData.isPositiveDirection ? showIndex++ : showIndex--;
             showIndex++
         }

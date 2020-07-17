@@ -15189,10 +15189,10 @@ declare namespace cc {
 		/** !#en Enum for vertical layout direction.
 		 Used in Grid Layout together with AxisDirection is VERTICAL
 		!#zh 垂直方向布局方式 */
-		export enum VerticalDirection {			
-			BOTTOM_TO_TOP = 0,
-			TOP_TO_BOTTOM = 0,		
-		}	
+		export enum VerticalDirection {
+            TOP_TO_BOTTOM = 0,
+            BOTTOM_TO_TOP = 0,
+		}
 	}
 		
 	/****************************************************

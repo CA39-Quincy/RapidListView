@@ -58,7 +58,8 @@ export default class RapidData extends RapidBase {
         this.layoutData.rowItemNum = this.layout.type === cc.Layout.Type.GRID ?
             Math.floor((this.layoutData.contentWidth + this.layoutData.spacingX - this.layoutData.paddingHorizontal) /
                 (this.layoutData.itemWidth + this.layoutData.spacingX)) : 1;
-        this.layoutData.contentHeight =  Math.ceil(dataLength / this.layoutData.rowItemNum) * (this.layoutData.itemHeight + this.layoutData.spacingY) + this.layoutData.paddingVertical - this.layoutData.spacingY;
+
+        this.layoutData.contentHeight = Math.ceil(dataLength / this.layoutData.rowItemNum) * (this.layoutData.itemHeight + this.layoutData.spacingY) + this.layoutData.paddingVertical - this.layoutData.spacingY;
 
         this.layoutData.viewHeight = isVertical ? this.node.height : this.node.width;
         this.layoutData.viewHeightNum = Math.ceil((this.layoutData.viewHeight + this.layoutData.spacingY - (isVertical ? this.layout.paddingTop : this.layout.paddingLeft)) / (this.layoutData.itemHeight + this.layoutData.spacingY)) + 1;
@@ -81,7 +82,7 @@ export default class RapidData extends RapidBase {
     }
 
     updateData(index: number, data: any) {
-        if(this.dataArray[index] === undefined) {
+        if (this.dataArray[index] === undefined) {
             cc.error(`更新的数据下标溢出！最大下标${this.dataArray.length - 1};传入参数${index}!`);
 
             return;
@@ -90,13 +91,13 @@ export default class RapidData extends RapidBase {
         this.dataArray[index] = data;
     }
 
-    updateItemSize(index:number, size: cc.Size) {
-        if(index !== this.updateItemIndex) {
+    updateItemSize(index: number, size: cc.Size) {
+        if (index !== this.updateItemIndex) {
             return
         }
         this.updateItemIndex = index;
 
-        if(index === this.itemDataArray.length - 1){
+        if (index === this.itemDataArray.length - 1) {
             this.updateItemIndex = this.itemDataArray.length;
         }
 
@@ -106,53 +107,98 @@ export default class RapidData extends RapidBase {
     }
 
     getItemData(index: number): RapidItemData {
-        if(index < 0) {
+        if (index < 0) {
             return null;
         }
 
-        if(this.itemDataArray[index]) {
+        if (this.itemDataArray[index]) {
             return this.itemDataArray[index];
         }
 
-
-        // cc.log("创建item", index);
-
-        let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
+        let isRollVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
+        // 从上到下排序
+        let isTopToBottom = this.layout.verticalDirection === cc.Layout.VerticalDirection.TOP_TO_BOTTOM;
+        // 从左到右
+        let isLeftToRight = this.layout.horizontalDirection === cc.Layout.HorizontalDirection.LEFT_TO_RIGHT;
+        let isGrid = this.layout.type === cc.Layout.Type.GRID;
+        let itemNode = this.rapidListView.getItemTemplateNode();
         let pox: number, poy: number;
 
-        let paddingStart = this.layoutData.paddingHorizontalStart;
-        pox = -this.layoutData.contentWidth / 2 + (paddingStart + this.layoutData.itemWidth * (1 - this.layoutData.itemAnchorX)) +  (this.layout.spacingX + this.layoutData.itemWidth) * (index % this.layoutData.rowItemNum);
+        // 垂直滚动
+        if (isRollVertical) {
+            let rowItemNum: number;
 
-        if(this.layout.type !== cc.Layout.Type.GRID){
-            pox = 0;
-            if(index === 0){
-                poy = this.layoutData.paddingVerticalStart + this.layoutData.itemHeight * (1 - this.layoutData.itemAnchorY);
-            }
-            else{
-                let lastData = this.itemDataArray[index - 1];
-                poy = (isVertical ? (-lastData.position.y + lastData.size.height) : (lastData.position.x + lastData.size.width)) + this.layoutData.spacingY;
-
-                // this.layoutData.contentHeight += lastData.size.height - this.layoutData.itemHeight;
-            }
-        }
-        else {
-            // 上下起始充填量 + item高 * (1 - 锚点Y) + (y轴间隔 + item高) * 所在行
-            poy = this.layoutData.paddingVerticalStart + this.layoutData.itemHeight * (1 - this.layoutData.itemAnchorY) + (this.layout.spacingY + this.layoutData.itemHeight) * Math.floor(index / this.layoutData.rowItemNum);
-            if(isVertical) {
-                this.layout.horizontalDirection === cc.Layout.HorizontalDirection.RIGHT_TO_LEFT && (pox = -pox);
-                this.layout.verticalDirection === cc.Layout.VerticalDirection.BOTTOM_TO_TOP && (poy = this.layoutData.contentHeight - poy);
+            if (isGrid) {
+                rowItemNum = Math.floor((this.content.width + this.layout.spacingX - (this.layout.paddingLeft + this.layout.paddingRight)) / (itemNode.width + this.layout.spacingX));
             }
             else {
-                this.layout.verticalDirection === cc.Layout.VerticalDirection.BOTTOM_TO_TOP && (pox = -pox);
-                this.layout.horizontalDirection === cc.Layout.HorizontalDirection.RIGHT_TO_LEFT && (poy = this.layoutData.contentHeight - poy);
+                rowItemNum = 1;
+            }
+
+            if (index === 0) {
+                if (isTopToBottom)
+                    poy = -this.layout.paddingTop - itemNode.height * (1 - itemNode.anchorY);
+                else
+                    poy = this.layout.paddingBottom + itemNode.height * itemNode.anchorY;
+            }
+            else {
+                let lastData = this.itemDataArray[isGrid ? Math.max(index - rowItemNum, 0) : index - 1];
+                let distance = lastData.size.height + this.layout.spacingY;
+                poy = lastData.position.y + (index < rowItemNum ? 0 : (isTopToBottom ? -distance : distance));
+            }
+
+            if (isGrid) {
+                let offset = index % rowItemNum * (itemNode.width + this.layout.spacingX);
+                if (isLeftToRight)
+                    pox = 0 - this.content.width * this.content.anchorX + this.layout.paddingLeft + itemNode.width * itemNode.anchorX + offset;
+                else
+                    pox = this.content.width * (1 - this.content.anchorX) - this.layout.paddingRight - itemNode.width * (1 - itemNode.anchorX) - offset;
+            }
+            else {
+                pox = 0;
             }
         }
+        // 水平滚动
+        else {
+            let lineItemNum: number;
 
-        let itemNode = this.rapidListView.getItemTemplateNode();
+            if (isGrid) {
+                lineItemNum = Math.floor((this.content.height + this.layout.spacingY - (this.layout.paddingTop + this.layout.paddingBottom)) / (itemNode.height + this.layout.spacingY));
+            }
+            else {
+                lineItemNum = 1;
+            }
+
+            if (index === 0) {
+                if (this.layout.type === cc.Layout.Type.GRID) {
+
+                }
+                if (isLeftToRight)
+                    pox = this.layoutData.paddingHorizontalStart + itemNode.width * itemNode.anchorX;
+                else
+                    pox = -this.layoutData.paddingHorizontalStart - itemNode.width * (1 - itemNode.anchorX);
+            }
+            else {
+                let lastData = this.itemDataArray[isGrid ? Math.max(index - lineItemNum, 0) : index - 1];
+                let distance = lastData.size.width + this.layout.spacingX;
+                pox = lastData.position.x + (index < lineItemNum ? 0 : (isLeftToRight ? distance : -distance));
+            }
+
+            if (isGrid) {
+                let offset = index % lineItemNum * (itemNode.height + this.layout.spacingY);
+                if (isTopToBottom)
+                    poy = this.content.height * this.content.anchorY - this.layout.paddingTop - itemNode.height * itemNode.anchorY - offset;
+                else
+                    poy = this.content.height * (0 - this.content.anchorY) + this.layout.paddingBottom + itemNode.height * itemNode.anchorY + offset;
+            }
+            else {
+                poy = 0;
+            }
+        }
 
         this.itemDataArray[index] = {
             index: index,
-            position: isVertical ? cc.v2(pox, -poy) : cc.v2(poy, -pox),
+            position: cc.v2(pox, poy),
             size: itemNode.getContentSize(),
             itemData: this.dataArray[index]
         } as RapidItemData;

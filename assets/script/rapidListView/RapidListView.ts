@@ -28,9 +28,9 @@ export default class RapidListView extends cc.Component {
     })
     protected itemTemplatePrefab: cc.Prefab = null;
 
-    @property(cc.Enum(RapidItemTemplateType))
-    private _itemTemplateType : RapidItemTemplateType = RapidItemTemplateType.NODE;
 
+    @property(cc.Enum(RapidItemTemplateType))
+    private _itemTemplateType: RapidItemTemplateType = RapidItemTemplateType.NODE;
     @property({
         type: cc.Enum(RapidItemTemplateType),
         tooltip: CC_DEV && "Item模板模式"
@@ -40,25 +40,85 @@ export default class RapidListView extends cc.Component {
         this.itemTemplateNode = null;
         this.itemTemplatePrefab = null;
     }
+
     protected get itemTemplateType(): RapidItemTemplateType {
         return this._itemTemplateType;
     }
 
+
     @property(RapidRollDirection)
     private _rollDirectionType: RapidRollDirection = RapidRollDirection.VERTICAL;
-
     @property({
         type: cc.Enum(RapidRollDirection),
         tooltip: CC_DEV && "列表滚动方向"
     })
     protected set rollDirectionType(val: RapidRollDirection) {
         this._rollDirectionType = val;
-
         this.updateProperty();
     }
+
     protected get rollDirectionType(): RapidRollDirection {
         return this._rollDirectionType;
     }
+
+
+    @property(cc.Layout.Type)
+    private _layoutType: cc.Layout.Type = cc.Layout.Type.VERTICAL;
+    @property({
+        type: cc.Enum(cc.Layout.Type),
+        tooltip: CC_DEV && "item排序类型，不允许选择“NONE”类型"
+    })
+    protected set layoutType(val: cc.Layout.Type) {
+        if(val === cc.Layout.Type.NONE) {
+            cc.warn("请重新选择Layout Type，不允许选择“NONE”类型！！！");
+
+            return;
+        }
+        this._layoutType = val;
+        this.updateProperty();
+    }
+
+    protected get layoutType(): cc.Layout.Type {
+        return this._layoutType;
+    }
+
+    @property(cc.Layout.VerticalDirection)
+    private _verticalDirection: cc.Layout.VerticalDirection = cc.Layout.VerticalDirection.TOP_TO_BOTTOM;
+    @property({
+        type: cc.Enum(cc.Layout.VerticalDirection),
+        tooltip: CC_DEV && "item纵向排序方向，约束从上到下正向，反之为逆向",
+        visible() {
+            return this.layoutType === cc.Layout.Type.VERTICAL || this.layoutType === cc.Layout.Type.GRID;
+        }
+    })
+    protected set verticalDirection(val: cc.Layout.VerticalDirection) {
+        this._verticalDirection = val;
+        this.updateProperty();
+    }
+
+    protected get verticalDirection(): cc.Layout.VerticalDirection {
+        return this._verticalDirection;
+    }
+
+
+    @property(cc.Layout.HorizontalDirection)
+    private _horizontalDirection: cc.Layout.HorizontalDirection = cc.Layout.HorizontalDirection.LEFT_TO_RIGHT;
+    @property({
+        type: cc.Enum(cc.Layout.HorizontalDirection),
+        tooltip: CC_DEV && "item横向排序方向，约束从左到右为正向，反之为逆向",
+        visible() {
+            return this.layoutType === cc.Layout.Type.HORIZONTAL || this.layoutType === cc.Layout.Type.GRID;
+        }
+    })
+    protected set horizontalDirection(val: cc.Layout.HorizontalDirection) {
+        this._horizontalDirection = val;
+        this.updateProperty();
+    }
+
+    protected get horizontalDirection(): cc.Layout.HorizontalDirection {
+        return this._horizontalDirection;
+    }
+
 
     @property({
         tooltip: CC_DEV && "是否自适应content宽高"
@@ -78,15 +138,32 @@ export default class RapidListView extends cc.Component {
     }
 
     private updateProperty() {
-        let isVertical = this.rollDirectionType === RapidRollDirection.VERTICAL;
+        // 是否垂直滚动
+        let isVerticalRoll = this.rollDirectionType === RapidRollDirection.VERTICAL;
+        // 是否正向排序
+        let isPositiveSort = (this.rollDirectionType === RapidRollDirection.HORIZONTAL && this.horizontalDirection === cc.Layout.HorizontalDirection.LEFT_TO_RIGHT)
+            || (this.rollDirectionType === RapidRollDirection.VERTICAL && this.verticalDirection === cc.Layout.VerticalDirection.TOP_TO_BOTTOM);
 
         let scrollView = this.node.getComponent(cc.ScrollView);
-        scrollView.vertical = isVertical;
-        scrollView.horizontal = !isVertical;
+        scrollView.vertical = isVerticalRoll;
+        scrollView.horizontal = !isVerticalRoll;
 
         let content = scrollView.content;
-        content.setAnchorPoint(isVertical ? cc.v2(0.5, 1) : cc.v2(0, 0.5));
-        content.setPosition(isVertical ? cc.v2(0, this.node.height / 2) : cc.v2(-this.node.width / 2, 0));
+        content.setAnchorPoint(isVerticalRoll ? cc.v2(0.5, isPositiveSort ? 1 : 0) : cc.v2(isPositiveSort ? 0 : 1, 0.5));
+
+        let offsetPos: number;
+        if(isVerticalRoll) {
+            offsetPos = isPositiveSort ? this.node.height - this.node.height * this.node.anchorY : this.node.height * this.node.anchorY - this.node.height;
+        }
+        else {
+            offsetPos = isPositiveSort ? this.node.width * ( 0 - this.node.anchorX) : this.node.width - this.node.width * this.node.anchorX;
+        }
+        content.setPosition(isVerticalRoll ? cc.v2(0, offsetPos) : cc.v2(offsetPos, 0));
+
+        let layout: cc.Layout = content.getComponent(cc.Layout);
+        layout.type = this.layoutType;
+        layout.verticalDirection = this.verticalDirection;
+        layout.horizontalDirection = this.horizontalDirection;
     }
 
     resetInEditor() {
@@ -131,6 +208,8 @@ export default class RapidListView extends cc.Component {
     getRollDirectionType(): RapidRollDirection {
         return this.rollDirectionType;
     }
+
+
 
     getIsAdaptionSize(): boolean {
         return this.isAdaptionSize;

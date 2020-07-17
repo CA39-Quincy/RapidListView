@@ -28,7 +28,7 @@
       }
     ],
     "_active": true,
-    "_level": 1,
+    "_level": 2,
     "_components": [
       {
         "__id__": 92
@@ -1066,6 +1066,9 @@
     "itemTemplatePrefab": null,
     "_itemTemplateType": 1,
     "_rollDirectionType": 1,
+    "_layoutType": 2,
+    "_verticalDirection": 1,
+    "_horizontalDirection": 0,
     "isAdaptionSize": false,
     "_id": ""
   },
@@ -1413,12 +1416,12 @@
     "_anchorPoint": {
       "__type__": "cc.Vec2",
       "x": 0.5,
-      "y": 1
+      "y": 0
     },
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 0,
+      "y": -150,
       "z": 0
     },
     "_scale": {
@@ -1582,8 +1585,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -105,
-      "y": -40,
+      "x": 105,
+      "y": 40,
       "z": 0
     },
     "_scale": {
@@ -1930,13 +1933,13 @@
     },
     "_N$startAxis": 0,
     "_N$paddingLeft": 15,
-    "_N$paddingRight": 0,
+    "_N$paddingRight": 15,
     "_N$paddingTop": 10,
     "_N$paddingBottom": 10,
     "_N$spacingX": 10,
     "_N$spacingY": 10,
-    "_N$verticalDirection": 1,
-    "_N$horizontalDirection": 0,
+    "_N$verticalDirection": 0,
+    "_N$horizontalDirection": 1,
     "_N$affectedByScale": false,
     "_id": ""
   },
@@ -2067,6 +2070,9 @@
     "itemTemplatePrefab": null,
     "_itemTemplateType": 1,
     "_rollDirectionType": 1,
+    "_layoutType": 3,
+    "_verticalDirection": 0,
+    "_horizontalDirection": 1,
     "isAdaptionSize": false,
     "_id": ""
   },
@@ -2096,7 +2102,7 @@
         "__id__": 70
       }
     ],
-    "_active": false,
+    "_active": true,
     "_level": 3,
     "_components": [
       {
@@ -2414,12 +2420,12 @@
     "_anchorPoint": {
       "__type__": "cc.Vec2",
       "x": 0.5,
-      "y": 1
+      "y": 0
     },
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 150,
+      "y": -150,
       "z": 0
     },
     "_scale": {
@@ -2511,7 +2517,7 @@
     "node": {
       "__id__": 70
     },
-    "_enabled": false,
+    "_enabled": true,
     "_materials": [
       {
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
@@ -2584,7 +2590,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -40,
+      "y": 40,
       "z": 0
     },
     "_scale": {
@@ -3068,6 +3074,9 @@
     "itemTemplatePrefab": null,
     "_itemTemplateType": 1,
     "_rollDirectionType": 1,
+    "_layoutType": 2,
+    "_verticalDirection": 0,
+    "_horizontalDirection": 0,
     "isAdaptionSize": false,
     "_id": ""
   },

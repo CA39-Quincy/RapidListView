@@ -12,6 +12,7 @@ export enum RapidToPositionType {
     RIGHT = 5
 }
 
+// 滚动方向
 export enum RapidRollDirection {
     VERTICAL = 1,
     HORIZONTAL = 2
