@@ -9,6 +9,30 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class RapidListView extends cc.Component {
 
+    @property({type: cc.Float})
+    private _anchorX: number = 0.5;
+    @property
+    protected set anchorX(val: number) {
+        this._anchorX = val;
+        this.updateAnchor();
+    }
+
+    protected get anchorX(): number {
+        return this._anchorX;
+    }
+
+
+    @property({type: cc.Float})
+    private _anchorY: number = 0.5;
+    @property
+    protected set anchorY(val: number) {
+        this._anchorY = val;
+        this.updateAnchor();
+    }
+
+    protected get anchorY(): number {
+        return this._anchorY;
+    }
 
     // 节点模板
     @property({
@@ -69,7 +93,7 @@ export default class RapidListView extends cc.Component {
         tooltip: CC_DEV && "item排序类型，不允许选择“NONE”类型"
     })
     protected set layoutType(val: cc.Layout.Type) {
-        if(val === cc.Layout.Type.NONE) {
+        if (val === cc.Layout.Type.NONE) {
             cc.warn("请重新选择Layout Type，不允许选择“NONE”类型！！！");
 
             return;
@@ -139,10 +163,9 @@ export default class RapidListView extends cc.Component {
 
     private updateProperty() {
         // 是否垂直滚动
-        let isVerticalRoll = this.rollDirectionType === RapidRollDirection.VERTICAL;
+        let isVerticalRoll = this.getIsVerticalRoll();
         // 是否正向排序
-        let isPositiveSort = (this.rollDirectionType === RapidRollDirection.HORIZONTAL && this.horizontalDirection === cc.Layout.HorizontalDirection.LEFT_TO_RIGHT)
-            || (this.rollDirectionType === RapidRollDirection.VERTICAL && this.verticalDirection === cc.Layout.VerticalDirection.TOP_TO_BOTTOM);
+        let isPositiveSort = this.getIsPositiveSort();
 
         let scrollView = this.node.getComponent(cc.ScrollView);
         scrollView.vertical = isVerticalRoll;
@@ -152,11 +175,11 @@ export default class RapidListView extends cc.Component {
         content.setAnchorPoint(isVerticalRoll ? cc.v2(0.5, isPositiveSort ? 1 : 0) : cc.v2(isPositiveSort ? 0 : 1, 0.5));
 
         let offsetPos: number;
-        if(isVerticalRoll) {
-            offsetPos = isPositiveSort ? this.node.height - this.node.height * this.node.anchorY : this.node.height * this.node.anchorY - this.node.height;
+        if (isVerticalRoll) {
+            offsetPos = isPositiveSort ? this.node.height - this.node.height * this.node.anchorY : -this.node.height * this.node.anchorY;
         }
         else {
-            offsetPos = isPositiveSort ? this.node.width * ( 0 - this.node.anchorX) : this.node.width - this.node.width * this.node.anchorX;
+            offsetPos = isPositiveSort ? this.node.width * (0 - this.node.anchorX) : this.node.width - this.node.width * this.node.anchorX;
         }
         content.setPosition(isVerticalRoll ? cc.v2(0, offsetPos) : cc.v2(offsetPos, 0));
 
@@ -164,6 +187,21 @@ export default class RapidListView extends cc.Component {
         layout.type = this.layoutType;
         layout.verticalDirection = this.verticalDirection;
         layout.horizontalDirection = this.horizontalDirection;
+    }
+
+    private updateAnchor() {
+        let view = this.node.getChildByName("view");
+
+        if (!view) {
+            cc.error("获取不到命名为“view”的包含Mask组件子节点, 请勿重命名view");
+
+            return;
+        }
+
+        this.node.setAnchorPoint(cc.v2(this.anchorX, this.anchorY));
+        view.setAnchorPoint(cc.v2(this.anchorX, this.anchorY));
+
+        this.updateProperty();
     }
 
     resetInEditor() {
@@ -209,7 +247,14 @@ export default class RapidListView extends cc.Component {
         return this.rollDirectionType;
     }
 
+    getIsVerticalRoll() {
+        return this.rollDirectionType === RapidRollDirection.VERTICAL;
+    }
 
+    getIsPositiveSort() {
+        return (this.rollDirectionType === RapidRollDirection.HORIZONTAL && this.horizontalDirection === cc.Layout.HorizontalDirection.LEFT_TO_RIGHT)
+            || (this.rollDirectionType === RapidRollDirection.VERTICAL && this.verticalDirection === cc.Layout.VerticalDirection.TOP_TO_BOTTOM);
+    }
 
     getIsAdaptionSize(): boolean {
         return this.isAdaptionSize;
@@ -223,9 +268,11 @@ export default class RapidListView extends cc.Component {
         this.rapidScroll.scrollToBottom(time);
     }
 
+    scrollToOffset(offset: number, time: number) {
+        this.rapidScroll.scrollToOffset(offset, time);
+    }
+
     addListenItemEvent(callFunc: Function) {
         this.itemEventCallFunc = callFunc;
     }
-
-    // update (dt) {}
 }

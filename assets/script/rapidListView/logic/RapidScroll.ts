@@ -132,21 +132,14 @@ export default class RapidScroll extends RapidBase {
         }
 
         Object.keys(this.showItemMap).length < layoutData.showItemNum && checkShowItemFunc(itemIndex);
-        // cc.log("itemIndex", itemIndex, isPositive ? "++" : "--");
     }
 
     private onRollEvent() {
         let differPosition = this.content.position.sub(this.contentPastPos);
-        let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
-
-        let a = this.scrollView.getMaxScrollOffset();
-        let b = this.scrollView.getScrollOffset();
-        let c = isVertical ? b.y / a.y : -(b.x / a.x);
-
-        // cc.log(a, b, c);
+        let scrollOffset = this.getScrollOffsetRate();
         // cc.log("rrrrrrr", this.content.position, this.content.height, differPosition.mag());
 
-        if (differPosition.mag() > 10 && c >= 0 && c <= 1) {
+        if (differPosition.mag() > 10 && scrollOffset >= 0 && scrollOffset <= 1) {
             this.contentPastPos = this.content.position;
 
             let isPositive = differPosition.x < 0 || differPosition.y > 0;
@@ -154,36 +147,41 @@ export default class RapidScroll extends RapidBase {
         }
     }
 
-    updateLayout(toPositionType: RapidToPositionType) {
-        // this.scrollView.scrollToOffset(cc.v2(0, 0), 0.1);
-        let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
-        let layoutData: RapidLayoutData = this.rapidListView.rapidData.layoutData;
-        isVertical ? (this.content.height = layoutData.contentHeight) : (this.content.width = layoutData.contentHeight);
+    private getScrollOffsetRate(): number {
 
-        let showIndex = layoutData.isPositiveDirection ? 0 : this.rapidListView.rapidData.getDataLength() - 1;
+        let a = this.scrollView.getMaxScrollOffset();
+        let b = this.scrollView.getScrollOffset();
+        let c = this.rapidListView.getIsVerticalRoll() ? parseInt(b.y.toFixed()) / parseInt(a.y.toFixed()) : -(parseInt(b.x.toFixed()) / parseInt(a.x.toFixed()));
 
-        showIndex = 0;
-
-        for (let i = 0; i < layoutData.showItemNum; i++) {
-            this.itemShow(showIndex);
-
-
-            // layoutData.isPositiveDirection ? showIndex++ : showIndex--;
-            showIndex++
-        }
-        // !layoutData.isPositiveDirection && this.scrollToBottom(0.1);
+        return c;
     }
 
+    updateLayout(toPositionType: RapidToPositionType) {
+        let layoutData: RapidLayoutData = this.rapidListView.rapidData.layoutData;
+        this.rapidListView.getIsVerticalRoll() ? (this.content.height = layoutData.contentHeight) : (this.content.width = layoutData.contentHeight);
 
+        for (let i = 0; i < layoutData.showItemNum; i++) {
+            this.itemShow(i);
+        }
+    }
 
+    scrollToOffset(offset: number, time: number) {
+        let maxOffset = this.scrollView.getMaxScrollOffset();
+        // 以创建的起始位置作为0
+        !this.rapidListView.getIsPositiveSort() && (offset = 1 - offset);
+        let v2 = this.rapidListView.getIsVerticalRoll() ? cc.v2(0, offset * maxOffset.y) : cc.v2(offset * maxOffset.x, 0);
+
+        this.scrollView.scrollToOffset(v2, time);
+    }
 
     scrollToBottom(time: number) {
         this.scrollView.scrollToBottom(time);
 
         this.scheduleOnce(() => {
-            if (this.content.y + this.node.height < this.content.height) {
+            let scrollOffset = this.getScrollOffsetRate();
+            if (scrollOffset > 0 && scrollOffset < 1) {
                 this.scrollToBottom(time);
             }
-        })
+        }, time)
     }
 }

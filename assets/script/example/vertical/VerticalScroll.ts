@@ -16,6 +16,8 @@ export default class VerticalScroll extends cc.Component {
     rapidListView3: RapidListView = null;
 
     start () {
+        window.VerticalScroll = this;
+
         let dataArray1 = [];
         while (dataArray1.length < 50) {
             dataArray1.push({});

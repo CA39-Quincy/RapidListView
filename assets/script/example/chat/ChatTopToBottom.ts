@@ -5,7 +5,7 @@ import {ChatData, ChatTargetType} from "./ChatConst";
 const CHAT_ARRAY = [
     "<img src='37'/><img src='37'/><img src='37'/>",
     "<img src='06'/>",
-    "<color=#cc6600>循环列表</color>",
+    "<color=#cc6600>循环列表</color><img src='06'/>",
     "<color=#cc6600>循环列表</color><color=#66ffcc>RapidListViewRapidListViewRapidListView\n</color><size=40><color=#66ffcc>循环列表</color></size>",
     "<color=#00ff00>Rich</c><color=#0fffff>Text</color><color=#00ff00>Rich</c><color=#0fffff>Text</color><color=#00ff00>Rich</c><color=#0fffff>Text</color>",
     "<color=#00ff00>Rich</c><color=#0fffff>Text</color><color=#00ff00>Rich</c><color=#0fffff>Text</color><color=#00ff00>Rich</c><color=#0fffff>Text</color><color=#00ff00>Rich</c><color=#0fffff>Text</color><color=#00ff00>Rich</c><color=#0fffff>Text</color><color=#00ff00>Rich</c><color=#0fffff>Text</color>",
@@ -37,6 +37,7 @@ export default class ChatTopToBottom extends cc.Component {
             chatArray.push(data);
         }
         this.chatRapidListView.updateData(chatArray, RapidToPositionType.TOP);
+        this.onBtnToBottom();
     }
 
     start () {
@@ -49,7 +50,7 @@ export default class ChatTopToBottom extends cc.Component {
     }
 
     onBtnToBottom() {
-        this.chatRapidListView.rapidScroll.scrollToBottom(0.5);
+        this.chatRapidListView.rapidScroll.scrollToBottom(0.01);
     }
 
     // update (dt) {}

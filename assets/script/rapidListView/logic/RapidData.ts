@@ -229,7 +229,7 @@ export default class RapidData extends RapidBase {
                     else
                         distance = lastData.size.width * itemNode.anchorX + this.layout.spacingX + size.width * (1 - itemNode.anchorX);
 
-                    pox = lastData.position.y + (isLeftToRight ? distance : -distance);
+                    pox = lastData.position.x + (isLeftToRight ? distance : -distance);
                 }
             }
 
