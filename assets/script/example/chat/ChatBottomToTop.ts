@@ -14,7 +14,7 @@ const CHAT_ARRAY = [
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class ChatTopToBottom extends cc.Component {
+export default class ChatBottomToTop extends cc.Component {
 
     @property(RapidListView)
     chatRapidListView: RapidListView = null;
@@ -22,7 +22,7 @@ export default class ChatTopToBottom extends cc.Component {
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        window.ChatTop = this;
+        window.ChatBottom = this;
 
         this.chatRapidListView.init();
 

@@ -38,7 +38,8 @@ export default class Main extends cc.Component {
         let buttonList = [
             {text: "垂直滚动列表"},
             {text: "水平滚动列表"},
-            {text: "好友（从上往下滚动）"}
+            {text: "聊天（从上往下排序）"},
+            {text: "聊天（从下往上排序）"}
         ];
 
         this.menuRapidListView.updateData(buttonList, RapidToPositionType.TOP);

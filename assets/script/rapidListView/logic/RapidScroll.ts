@@ -62,7 +62,7 @@ export default class RapidScroll extends RapidBase {
 
     private onItemSizeChange(index: number, itemSize: cc.Size) {
         this.rapidListView.rapidData.updateItemSize(index, itemSize);
-        // this.showItemMap[index].updatePosition(this.rapidListView.rapidData.getItemData(index));
+        this.showItemMap[index].updatePosition(this.rapidListView.rapidData.updatePosition(index));
         this.content.height = this.rapidListView.rapidData.layoutData.contentHeight;
     }
 

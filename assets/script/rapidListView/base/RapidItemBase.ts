@@ -1,4 +1,3 @@
-
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -9,14 +8,14 @@ export default class RapidItemBase extends cc.Component {
 
     protected rapidItemData: RapidItemData = null;
 
-    private sizeChangeCallFunc: Function = null;
+    private sizeChangeCallFunc: (index: number, itemSize: cc.Size) => {} = null;
     private itemEventCallFunc: Function = null;
 
     protected onSizeChange() {
         this.sizeChangeCallFunc && this.sizeChangeCallFunc(this.rapidItemData.index, this.node.getContentSize());
     }
 
-    protected onItemEvent(type: string, data: any) {
+    protected onItemEvent(type: any, data: any) {
         this.itemEventCallFunc && this.itemEventCallFunc(type, data);
     }
 
@@ -35,7 +34,7 @@ export default class RapidItemBase extends cc.Component {
         this.itemEventCallFunc = eventCallFunc;
         this.onShow();
 
-        for(let i = 0; i < layerParentArray.length; i++) {
+        for (let i = 0; i < layerParentArray.length; i++) {
             let node = i === 0 ? this.node : this.layerArray[i];
             node.parent = layerParentArray[i];
             node.setPosition(itemData.position);
@@ -43,7 +42,7 @@ export default class RapidItemBase extends cc.Component {
     }
 
     hide() {
-        for(let i = 1; i < this.layerArray.length; i++) {
+        for (let i = 1; i < this.layerArray.length; i++) {
             this.layerArray[i].parent = this.node;
         }
 
@@ -52,11 +51,10 @@ export default class RapidItemBase extends cc.Component {
         this.onHide();
     }
 
-    updatePosition(itemData: RapidItemData) {
-        this.rapidItemData = itemData;
-        for(let i = 0; i < this.layerArray.length; i++) {
+    updatePosition(position: cc.Vec2) {
+        for (let i = 0; i < this.layerArray.length; i++) {
             let node = i === 0 ? this.node : this.layerArray[i];
-            node.setPosition(itemData.position);
+            node.setPosition(position);
         }
     }
 
@@ -64,7 +62,7 @@ export default class RapidItemBase extends cc.Component {
         return this.layerArray;
     }
 
-    getPostion()  {
+    getPostion() {
         this.node.getPosition();
     }
 
