@@ -24,19 +24,22 @@ export default class ChatBottomToTop extends cc.Component {
     onLoad () {
         window.ChatBottom = this;
 
-        this.chatRapidListView.init();
 
         let chatArray = [];
         while (chatArray.length < 50) {
 
             let data = {
-                type: chatArray.length % 5 === 0 ? ChatTargetType.TIME : this.getRandom(1, 2),
-                text: chatArray.length % 5 === 0 ? new Date().toLocaleTimeString() : CHAT_ARRAY[this.getRandom(0, CHAT_ARRAY.length - 1)]
+                type: chatArray.length % 5 === 0 && chatArray.length !== 0 ? ChatTargetType.TIME : this.getRandom(1, 2),
+                text: chatArray.length % 5 === 0 && chatArray.length !== 0 ? new Date().toLocaleTimeString() : CHAT_ARRAY[this.getRandom(0, CHAT_ARRAY.length - 1)]
             } as ChatData;
 
             chatArray.push(data);
         }
-        this.chatRapidListView.updateData(chatArray, RapidToPositionType.TOP);
+
+        this.chatRapidListView.init(index => {
+            return chatArray[index];
+        });
+        this.chatRapidListView.updateView(chatArray.length, 0);
     }
 
     start () {

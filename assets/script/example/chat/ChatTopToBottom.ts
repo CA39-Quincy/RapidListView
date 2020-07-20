@@ -24,8 +24,6 @@ export default class ChatTopToBottom extends cc.Component {
     onLoad () {
         window.ChatTop = this;
 
-        this.chatRapidListView.init();
-
         let chatArray = [];
         while (chatArray.length < 50) {
 
@@ -36,7 +34,10 @@ export default class ChatTopToBottom extends cc.Component {
 
             chatArray.push(data);
         }
-        this.chatRapidListView.updateData(chatArray, RapidToPositionType.TOP);
+        this.chatRapidListView.init(index => {
+            return chatArray[index];
+        });
+        this.chatRapidListView.updateView(chatArray.length, 0);
         this.onBtnToBottom();
     }
 

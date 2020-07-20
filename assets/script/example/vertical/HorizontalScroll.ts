@@ -21,7 +21,7 @@ export default class HorizontalScroll extends cc.Component {
         }
 
         this.rapidListView1.init();
-        this.rapidListView1.updateData(dataArray1, RapidToPositionType.TOP);
+        this.rapidListView1.updateView(dataArray1.length, 0);
 
         let dataArray2 = [];
         while (dataArray2.length < 200) {
@@ -29,6 +29,6 @@ export default class HorizontalScroll extends cc.Component {
         }
 
         this.rapidListView2.init();
-        this.rapidListView2.updateData(dataArray2, RapidToPositionType.TOP);
+        this.rapidListView2.updateView(dataArray2.length, 0);
     }
 }

@@ -24,7 +24,7 @@ export default class VerticalScroll extends cc.Component {
         }
 
         this.rapidListView1.init();
-        this.rapidListView1.updateData(dataArray1, RapidToPositionType.TOP);
+        this.rapidListView1.updateView(dataArray1.length, 0);
 
         let dataArray2 = [];
         while (dataArray2.length < 198) {
@@ -32,7 +32,7 @@ export default class VerticalScroll extends cc.Component {
         }
 
         this.rapidListView2.init();
-        this.rapidListView2.updateData(dataArray2, RapidToPositionType.TOP);
+        this.rapidListView2.updateView(dataArray2.length, 0);
 
         let dataArray3 = [];
         while (dataArray3.length < 50) {
@@ -40,7 +40,7 @@ export default class VerticalScroll extends cc.Component {
         }
 
         this.rapidListView3.init();
-        this.rapidListView3.updateData(dataArray3, RapidToPositionType.TOP);
+        this.rapidListView3.updateView(dataArray3.length, 0);
     }
 
     // update (dt) {}

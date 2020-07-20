@@ -19,7 +19,7 @@ export default class RapidItemBase extends cc.Component {
         this.itemEventCallFunc && this.itemEventCallFunc(type, data);
     }
 
-    protected onShow() {
+    protected onShow(itemData: any) {
 
     }
 
@@ -27,17 +27,17 @@ export default class RapidItemBase extends cc.Component {
 
     }
 
-    show(itemData: RapidItemData, layerParentArray: cc.Node[], eventCallFunc: Function) {
+    show(rapidItemData: RapidItemData, itemData: any, layerParentArray: cc.Node[], eventCallFunc: Function) {
         // cc.log("Item show data", itemData);
 
-        this.rapidItemData = itemData;
+        this.rapidItemData = rapidItemData;
         this.itemEventCallFunc = eventCallFunc;
-        this.onShow();
+        this.onShow(itemData);
 
         for (let i = 0; i < layerParentArray.length; i++) {
             let node = i === 0 ? this.node : this.layerArray[i];
             node.parent = layerParentArray[i];
-            node.setPosition(itemData.position);
+            node.setPosition(rapidItemData.position);
         }
     }
 

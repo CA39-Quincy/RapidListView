@@ -1,5 +1,5 @@
 import RapidItemBase from "../../rapidListView/base/RapidItemBase";
-import {ChatData, ChatTargetType} from "./ChatConst";
+import {ChatTargetType} from "./ChatConst";
 
 
 const {ccclass, property} = cc._decorator;
@@ -45,10 +45,8 @@ export default class ChatItem extends RapidItemBase {
         this.adaptiveHeight = this.node.height - contentWidget.top;
     }
 
-    onShow() {
+    onShow(itemData) {
         !this.isInit && this.init();
-
-        let itemData: ChatData = this.rapidItemData.itemData;
 
         for(let i = 0, iLength = this.layerArray.length; i < iLength; i++) {
             this.layerArray[i].getChildByName("Time").active = itemData.type === ChatTargetType.TIME;
@@ -91,8 +89,6 @@ export default class ChatItem extends RapidItemBase {
 
     private updateSize(height: number) {
         this.node.height = height;
-        this.rapidItemData.size = this.node.getContentSize();
-
         this.onSizeChange();
     }
 }

@@ -6,22 +6,14 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class RapidData extends RapidBase {
 
-    // private _rowItemNum: number = 1;
-    // public set rowItemNum(val: number) {
-    //     this._rowItemNum = val;
-    // }
-    // public get rowItemNum() {
-    //     return this._rowItemNum;
-    // }
-
     public layoutData: RapidLayoutData;
 
     private content: cc.Node = null;
     private layout: cc.Layout = null;
 
     private itemDataArray: RapidItemData[] = [];
-    private dataArray: any[] = [];
 
+    private itemCount: number = 0;
     private updateItemIndex: number = 0;
 
     protected onInit() {
@@ -29,66 +21,34 @@ export default class RapidData extends RapidBase {
         this.layout = this.content.getComponent(cc.Layout);
     }
 
-    updateDataArray(dataArray: any[]) {
-        this.dataArray = dataArray;
-
-
-        let itemNode = this.rapidListView.getItemTemplateNode();
-        let dataLength = this.dataArray.length;
-        let isVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
-
+    updateDataArray(itemCount: number) {
+        this.itemCount = itemCount;
         this.layoutData = {} as RapidLayoutData;
 
-        this.layoutData.itemWidth = isVertical ? itemNode.width : itemNode.height;
-        this.layoutData.itemHeight = isVertical ? itemNode.height : itemNode.width;
-
-        this.layoutData.itemAnchorX = isVertical ? itemNode.anchorX : itemNode.anchorY;
-        this.layoutData.itemAnchorY = isVertical ? itemNode.anchorY : itemNode.anchorX;
-
-        this.layoutData.spacingX = isVertical ? this.layout.spacingX : this.layout.spacingY;
-        this.layoutData.spacingY = isVertical ? this.layout.spacingY : this.layout.spacingX;
-
-        this.layoutData.paddingHorizontal = isVertical ? this.layout.paddingLeft + this.layout.paddingRight : this.layout.paddingTop + this.layout.paddingBottom;
-        this.layoutData.paddingVertical = isVertical ? this.layout.paddingTop + this.layout.paddingBottom : this.layout.paddingLeft + this.layout.paddingRight;
-
-        this.layoutData.paddingHorizontalStart = this.layout.horizontalDirection === cc.Layout.HorizontalDirection.LEFT_TO_RIGHT ? this.layout.paddingLeft : this.layout.paddingRight;
-        this.layoutData.paddingVerticalStart = this.layout.verticalDirection === cc.Layout.VerticalDirection.TOP_TO_BOTTOM ? this.layout.paddingTop : this.layout.paddingBottom;
+        let itemNode = this.rapidListView.getItemTemplateNode();
+        let isVertical = this.rapidListView.getIsVerticalRoll();
+        let itemWidth = isVertical ? itemNode.width : itemNode.height;
+        let itemHeight = isVertical ? itemNode.height : itemNode.width;
+        let spacingX = isVertical ? this.layout.spacingX : this.layout.spacingY;
+        let spacingY = isVertical ? this.layout.spacingY : this.layout.spacingX;
+        let paddingHorizontal = isVertical ? this.layout.paddingLeft + this.layout.paddingRight : this.layout.paddingTop + this.layout.paddingBottom;
+        let paddingVertical = isVertical ? this.layout.paddingTop + this.layout.paddingBottom : this.layout.paddingLeft + this.layout.paddingRight;
 
         this.layoutData.contentWidth = isVertical ? this.content.width : this.content.height;
         this.layoutData.rowItemNum = this.layout.type === cc.Layout.Type.GRID ?
-            Math.floor((this.layoutData.contentWidth + this.layoutData.spacingX - this.layoutData.paddingHorizontal) /
-                (this.layoutData.itemWidth + this.layoutData.spacingX)) : 1;
+            Math.floor((this.layoutData.contentWidth + spacingX - paddingHorizontal) / (itemWidth + spacingX)) : 1;
 
-        this.layoutData.contentHeight = Math.ceil(dataLength / this.layoutData.rowItemNum) * (this.layoutData.itemHeight + this.layoutData.spacingY) + this.layoutData.paddingVertical - this.layoutData.spacingY;
-
+        this.layoutData.contentHeight = Math.ceil(itemCount / this.layoutData.rowItemNum) * (itemHeight + spacingY) + paddingVertical - spacingY;
         this.layoutData.viewHeight = isVertical ? this.node.height : this.node.width;
-        this.layoutData.viewHeightNum = Math.ceil((this.layoutData.viewHeight + this.layoutData.spacingY - (isVertical ? this.layout.paddingTop : this.layout.paddingLeft)) / (this.layoutData.itemHeight + this.layoutData.spacingY)) + 1;
-        this.layoutData.showItemNum = Math.min(this.layoutData.rowItemNum * this.layoutData.viewHeightNum, dataLength);
+        let viewHeightNum = Math.ceil((this.layoutData.viewHeight + spacingY - (isVertical ? this.layout.paddingTop : this.layout.paddingLeft)) / (itemHeight + spacingY)) + 1;
+        this.layoutData.showItemNum = Math.min(this.layoutData.rowItemNum * viewHeightNum, itemCount);
 
         this.layoutData.isPositiveDirection = (isVertical && this.layout.verticalDirection === cc.Layout.VerticalDirection.TOP_TO_BOTTOM) ||
             (!isVertical && this.layout.horizontalDirection === cc.Layout.HorizontalDirection.LEFT_TO_RIGHT);
     }
 
-    getDataArray(): any[] {
-        return this.dataArray
-    }
-
-    getDataLength(): number {
-        return this.dataArray.length;
-    }
-
-    getData(index: number): any {
-        return this.dataArray[index]
-    }
-
-    updateData(index: number, data: any) {
-        if (this.dataArray[index] === undefined) {
-            cc.error(`更新的数据下标溢出！最大下标${this.dataArray.length - 1};传入参数${index}!`);
-
-            return;
-        }
-
-        this.dataArray[index] = data;
+    getItemCount(): number {
+        return this.itemCount;
     }
 
     updateItemSize(index: number, size: cc.Size) {
@@ -101,8 +61,12 @@ export default class RapidData extends RapidBase {
             this.updateItemIndex = this.itemDataArray.length;
         }
 
-        let itemData: RapidItemData = this.itemDataArray[index];
-        let sizeDiffer = itemData.size.height - this.layoutData.itemHeight;
+        let itemNode = this.rapidListView.getItemTemplateNode();
+        let isVertical = this.rapidListView.getIsVerticalRoll();
+
+        let sizeDiffer = isVertical ? size.height - itemNode.height : size.width - itemNode.width;
+
+        this.itemDataArray[index].size = size;
         this.layoutData.contentHeight += sizeDiffer;
     }
 
@@ -128,7 +92,6 @@ export default class RapidData extends RapidBase {
             index: index,
             position: this.getItemPosition(index),
             size: itemNode.getContentSize(),
-            itemData: this.dataArray[index]
         } as RapidItemData;
 
         return this.itemDataArray[index];
@@ -153,14 +116,12 @@ export default class RapidData extends RapidBase {
 
         // 垂直滚动
         if (isRollVertical) {
-            let rowItemNum: number;
 
-            if (isGrid) {
+            let rowItemNum: number;
+            if (isGrid)
                 rowItemNum = Math.floor((this.content.width + this.layout.spacingX - (this.layout.paddingLeft + this.layout.paddingRight)) / (size.width + this.layout.spacingX));
-            }
-            else {
+            else
                 rowItemNum = 1;
-            }
 
             if (index === 0) {
                 if (isTopToBottom)
@@ -171,12 +132,12 @@ export default class RapidData extends RapidBase {
             else {
                 let lastData = this.itemDataArray[isGrid ? Math.max(index - rowItemNum, 0) : index - 1];
 
-                if(index < rowItemNum) {
+                if (index < rowItemNum) {
                     poy = lastData.position.y;
                 }
                 else {
                     let distance: number;
-                    if(isTopToBottom)
+                    if (isTopToBottom)
                         distance = lastData.size.height * itemNode.anchorY + this.layout.spacingY + size.height * (1 - itemNode.anchorY);
                     else
                         distance = lastData.size.height * (1 - itemNode.anchorY) + this.layout.spacingY + size.height * itemNode.anchorY;
@@ -212,19 +173,19 @@ export default class RapidData extends RapidBase {
 
                 }
                 if (isLeftToRight)
-                    pox = this.layoutData.paddingHorizontalStart + size.width * itemNode.anchorX;
+                    pox = this.layout.paddingLeft + size.width * itemNode.anchorX;
                 else
-                    pox = -this.layoutData.paddingHorizontalStart - size.width * (1 - itemNode.anchorX);
+                    pox = -this.layout.paddingRight - size.width * (1 - itemNode.anchorX);
             }
             else {
                 let lastData = this.itemDataArray[isGrid ? Math.max(index - lineItemNum, 0) : index - 1];
 
-                if(index < lineItemNum) {
+                if (index < lineItemNum) {
                     pox = lastData.position.x;
                 }
                 else {
                     let distance: number;
-                    if(isLeftToRight)
+                    if (isLeftToRight)
                         distance = lastData.size.width * (1 - itemNode.anchorX) + this.layout.spacingX + size.width * itemNode.anchorX;
                     else
                         distance = lastData.size.width * itemNode.anchorX + this.layout.spacingX + size.width * (1 - itemNode.anchorX);

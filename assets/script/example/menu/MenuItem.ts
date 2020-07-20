@@ -12,9 +12,9 @@ export default class MenuItem extends RapidItemBase {
 
     // onLoad () {}
 
-    onShow () {
+    onShow (itemData) {
         this.node.on("click", this.onClick, this);
-        this.text.string = this.rapidItemData.itemData.text;
+        this.text.string = itemData.text;
     }
 
     onHide() {

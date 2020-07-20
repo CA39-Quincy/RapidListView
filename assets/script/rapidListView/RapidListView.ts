@@ -150,6 +150,7 @@ export default class RapidListView extends cc.Component {
     protected isAdaptionSize: boolean = false;
 
     private itemEventCallFunc: Function = null;
+    private getItemDataCallFunc: (index: number) => {} = null;
 
     public rapidScroll: RapidScroll;
     public rapidData: RapidData;
@@ -209,7 +210,8 @@ export default class RapidListView extends cc.Component {
         this.updateProperty();
     }
 
-    init() {
+    init(getItemDataCallFunc?: (index: number) => {}) {
+        this.getItemDataCallFunc = getItemDataCallFunc;
         this.itemTemplateNode && (this.itemTemplateNode.active = false);
 
         this.rapidData = this.node.addComponent(RapidData);
@@ -221,10 +223,9 @@ export default class RapidListView extends cc.Component {
         this.rapidScroll.init(this);
     }
 
-
-    updateData(itemDataArray: any[], toPositionType: RapidToPositionType) {
-        this.rapidData.updateDataArray(itemDataArray);
-        this.rapidScroll.updateLayout(toPositionType);
+    updateView(itemCount: number, toOffset?: number) {
+        this.rapidData.updateDataArray(itemCount);
+        this.rapidScroll.updateLayout(toOffset);
     }
 
     getItemTemplate(): cc.Node | cc.Prefab | any {
@@ -262,6 +263,10 @@ export default class RapidListView extends cc.Component {
 
     getItemEvent(): Function {
         return this.itemEventCallFunc;
+    }
+
+    getItemData(index: number) {
+        return this.getItemDataCallFunc ? this.getItemDataCallFunc(index) : null;
     }
 
     scrollToBottom(time: number) {

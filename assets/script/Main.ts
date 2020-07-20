@@ -32,9 +32,6 @@ export default class Main extends cc.Component {
         window.mainScene = this;
         this.back.active = false;
 
-        this.menuRapidListView.init();
-        this.menuRapidListView.addListenItemEvent(this.onItemEvent.bind(this));
-
         let buttonList = [
             {text: "垂直滚动列表"},
             {text: "水平滚动列表"},
@@ -42,7 +39,12 @@ export default class Main extends cc.Component {
             {text: "聊天（从下往上排序）"}
         ];
 
-        this.menuRapidListView.updateData(buttonList, RapidToPositionType.TOP);
+        this.menuRapidListView.init(index => {
+            return buttonList[index];
+        });
+
+        this.menuRapidListView.addListenItemEvent(this.onItemEvent.bind(this));
+        this.menuRapidListView.updateView(buttonList.length, 0);
     }
 
     onEnable() {

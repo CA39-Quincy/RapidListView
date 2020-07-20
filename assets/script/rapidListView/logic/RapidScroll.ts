@@ -72,7 +72,7 @@ export default class RapidScroll extends RapidBase {
 
         this.showItemMap[index] = itemScript;
         this.rapidListView.getIsAdaptionSize() && itemScript.addListenSizeChange(this.onItemSizeChange.bind(this));
-        itemScript.show(this.rapidListView.rapidData.getItemData(index), this.layerArray, this.rapidListView.getItemEvent());
+        itemScript.show(this.rapidListView.rapidData.getItemData(index), this.rapidListView.getItemData(index), this.layerArray, this.rapidListView.getItemEvent());
     }
 
     private itemHide(index: number) {
@@ -110,7 +110,7 @@ export default class RapidScroll extends RapidBase {
         let checkShowItemFunc = (index: number) => {
             let showIndex = index + (isPositive ? 1 : -1);
 
-            while (showIndex >= 0 && showIndex < this.rapidListView.rapidData.getDataLength()) {
+            while (showIndex >= 0 && showIndex < this.rapidListView.rapidData.getItemCount()) {
                 // 预先在屏幕外充填一个
                 !this.showItemMap[showIndex] && this.itemShow(showIndex);
                 let isInView = checkIsInViewFunc(this.showItemMap[showIndex].node, showIndex);
@@ -156,13 +156,15 @@ export default class RapidScroll extends RapidBase {
         return c;
     }
 
-    updateLayout(toPositionType: RapidToPositionType) {
+    updateLayout(toOffset?: number) {
         let layoutData: RapidLayoutData = this.rapidListView.rapidData.layoutData;
         this.rapidListView.getIsVerticalRoll() ? (this.content.height = layoutData.contentHeight) : (this.content.width = layoutData.contentHeight);
 
         for (let i = 0; i < layoutData.showItemNum; i++) {
             this.itemShow(i);
         }
+
+        this.scrollToOffset(toOffset || 0, 0.03);
     }
 
     scrollToOffset(offset: number, time: number) {
