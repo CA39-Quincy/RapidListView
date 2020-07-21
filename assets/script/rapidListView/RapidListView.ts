@@ -269,12 +269,12 @@ export default class RapidListView extends cc.Component {
         return this.getItemDataCallFunc ? this.getItemDataCallFunc(index) : null;
     }
 
-    scrollToBottom(time: number) {
-        this.rapidScroll.scrollToBottom(time);
-    }
-
     scrollToOffset(offset: number, time: number) {
         this.rapidScroll.scrollToOffset(offset, time);
+    }
+
+    scrollToIndex(index: number, time: number) {
+        this.rapidScroll.scrollToIndex(index, time);
     }
 
     addListenItemEvent(callFunc: Function) {

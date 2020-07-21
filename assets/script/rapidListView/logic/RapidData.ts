@@ -15,6 +15,7 @@ export default class RapidData extends RapidBase {
 
     private itemCount: number = 0;
     private updateItemIndex: number = 0;
+    private isUpdateSizeFinish: boolean;
 
     protected onInit() {
         this.content = this.node.getComponent(cc.ScrollView).content;
@@ -23,6 +24,8 @@ export default class RapidData extends RapidBase {
 
     updateDataArray(itemCount: number) {
         this.itemCount = itemCount;
+        this.updateItemIndex = 0;
+        this.isUpdateSizeFinish = false;
         this.layoutData = {} as RapidLayoutData;
 
         let itemNode = this.rapidListView.getItemTemplateNode();
@@ -52,13 +55,18 @@ export default class RapidData extends RapidBase {
     }
 
     updateItemSize(index: number, size: cc.Size) {
-        if (index !== this.updateItemIndex) {
-            return
+        // if (index !== this.updateItemIndex && this.updateItemIndex === this.itemDataArray.length) {
+        //     return
+        // }
+
+        if(this.isUpdateSizeFinish) {
+            return;
         }
         this.updateItemIndex = index;
 
         if (index === this.itemDataArray.length - 1) {
             this.updateItemIndex = this.itemDataArray.length;
+            this.isUpdateSizeFinish = true;
         }
 
         let itemNode = this.rapidListView.getItemTemplateNode();

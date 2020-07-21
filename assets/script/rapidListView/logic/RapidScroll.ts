@@ -1,6 +1,5 @@
 import RapidBase from "../base/RapidBase";
 import RapidItemBase from "../base/RapidItemBase";
-import {RapidRollDirection, RapidToPositionType} from "../enum/RapidEnum";
 
 const {ccclass, property} = cc._decorator;
 
@@ -40,6 +39,10 @@ export default class RapidScroll extends RapidBase {
 
     onDisable() {
         this.node.off("scrolling", this.onRollEvent, this);
+
+        for (let i in this.showItemMap) {
+            this.itemHide(i);
+        }
     }
 
     private initLayout() {
@@ -75,7 +78,7 @@ export default class RapidScroll extends RapidBase {
         itemScript.show(this.rapidListView.rapidData.getItemData(index), this.rapidListView.getItemData(index), this.layerArray, this.rapidListView.getItemEvent());
     }
 
-    private itemHide(index: number) {
+    private itemHide(index: number | string) {
         let item: RapidItemBase = this.showItemMap[index];
         item.hide();
 
@@ -153,7 +156,7 @@ export default class RapidScroll extends RapidBase {
         let b = this.scrollView.getScrollOffset();
         let c = this.rapidListView.getIsVerticalRoll() ? parseInt(b.y.toFixed()) / parseInt(a.y.toFixed()) : -(parseInt(b.x.toFixed()) / parseInt(a.x.toFixed()));
 
-        return c;
+        return isNaN(c) ? 0 : c;
     }
 
     updateLayout(toOffset?: number) {
@@ -174,16 +177,20 @@ export default class RapidScroll extends RapidBase {
         let v2 = this.rapidListView.getIsVerticalRoll() ? cc.v2(0, offset * maxOffset.y) : cc.v2(offset * maxOffset.x, 0);
 
         this.scrollView.scrollToOffset(v2, time);
+
+        if (offset === 0 || offset === 1) {
+            this.scheduleOnce(() => {
+                let scrollOffset = this.getScrollOffsetRate();
+                scrollOffset > 0 && scrollOffset < 1 && this.scrollToOffset(offset, time);
+            }, time)
+        }
     }
 
-    scrollToBottom(time: number) {
-        this.scrollView.scrollToBottom(time);
+    scrollToIndex(index: number, time: number) {
+        let maxOffset = this.scrollView.getMaxScrollOffset();
+        let itemData: RapidItemData = this.rapidListView.rapidData.getItemData(index);
+        let offset = this.rapidListView.getIsVerticalRoll() ? itemData.position.y / maxOffset.y : itemData.position.x / maxOffset.x;
 
-        this.scheduleOnce(() => {
-            let scrollOffset = this.getScrollOffsetRate();
-            if (scrollOffset > 0 && scrollOffset < 1) {
-                this.scrollToBottom(time);
-            }
-        }, time)
+        this.scrollToOffset(offset, time);
     }
 }

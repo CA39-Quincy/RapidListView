@@ -39,11 +39,10 @@ export default class ChatBottomToTop extends cc.Component {
         this.chatRapidListView.init(index => {
             return chatArray[index];
         });
-        this.chatRapidListView.updateView(chatArray.length, 0);
     }
 
-    start () {
-
+    onEnable() {
+        this.chatRapidListView.updateView(50, 0);
     }
 
     getRandom(min, max) {
@@ -52,7 +51,7 @@ export default class ChatBottomToTop extends cc.Component {
     }
 
     onBtnToBottom() {
-        this.chatRapidListView.rapidScroll.scrollToBottom(0.5);
+        this.chatRapidListView.rapidScroll.scrollToOffset(1, 0.5);
     }
 
     // update (dt) {}

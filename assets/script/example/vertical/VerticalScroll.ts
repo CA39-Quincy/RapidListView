@@ -15,7 +15,7 @@ export default class VerticalScroll extends cc.Component {
     @property(RapidListView)
     rapidListView3: RapidListView = null;
 
-    start () {
+    onLoad () {
         window.VerticalScroll = this;
 
         let dataArray1 = [];
@@ -24,7 +24,6 @@ export default class VerticalScroll extends cc.Component {
         }
 
         this.rapidListView1.init();
-        this.rapidListView1.updateView(dataArray1.length, 0);
 
         let dataArray2 = [];
         while (dataArray2.length < 198) {
@@ -32,7 +31,6 @@ export default class VerticalScroll extends cc.Component {
         }
 
         this.rapidListView2.init();
-        this.rapidListView2.updateView(dataArray2.length, 0);
 
         let dataArray3 = [];
         while (dataArray3.length < 50) {
@@ -40,7 +38,12 @@ export default class VerticalScroll extends cc.Component {
         }
 
         this.rapidListView3.init();
-        this.rapidListView3.updateView(dataArray3.length, 0);
+    }
+
+    onEnable() {
+        this.rapidListView1.updateView(50, 0);
+        this.rapidListView2.updateView(198, 0);
+        this.rapidListView3.updateView(50, 0);
     }
 
     // update (dt) {}

@@ -12,7 +12,7 @@ export default class HorizontalScroll extends cc.Component {
     @property(RapidListView)
     rapidListView2: RapidListView = null;
 
-    start() {
+    onLoad() {
         window.HorizontalScroll = this;
 
         let dataArray1 = [];
@@ -21,7 +21,6 @@ export default class HorizontalScroll extends cc.Component {
         }
 
         this.rapidListView1.init();
-        this.rapidListView1.updateView(dataArray1.length, 0);
 
         let dataArray2 = [];
         while (dataArray2.length < 200) {
@@ -29,6 +28,11 @@ export default class HorizontalScroll extends cc.Component {
         }
 
         this.rapidListView2.init();
-        this.rapidListView2.updateView(dataArray2.length, 0);
+    }
+
+    onEnable() {
+        this.rapidListView1.updateView(50, 0);
+        this.rapidListView2.updateView(200, 0);
+
     }
 }

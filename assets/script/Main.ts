@@ -1,6 +1,4 @@
 import RapidListView from "./rapidListView/RapidListView";
-import {RapidToPositionType} from "./rapidListView/enum/RapidEnum";
-
 
 
 const {ccclass, property} = cc._decorator;
@@ -24,7 +22,8 @@ export default class Main extends cc.Component {
     viewArray: cc.Prefab[] = [];
 
     private viewMap: Object = Object.create(null);
-    private showIndex: number = null;
+    private showIndex: number = null;]
+    private buttonList: any[];
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -35,8 +34,7 @@ export default class Main extends cc.Component {
         let buttonList = [
             {text: "垂直滚动列表"},
             {text: "水平滚动列表"},
-            {text: "聊天（从上往下排序）"},
-            {text: "聊天（从下往上排序）"}
+            {text: "聊天"},
         ];
 
         this.menuRapidListView.init(index => {
@@ -44,7 +42,8 @@ export default class Main extends cc.Component {
         });
 
         this.menuRapidListView.addListenItemEvent(this.onItemEvent.bind(this));
-        this.menuRapidListView.updateView(buttonList.length, 0);
+        this.buttonList = buttonList;
+        this.menuRapidListView.updateView(this.buttonList.length, 0);
     }
 
     onEnable() {
@@ -78,6 +77,7 @@ export default class Main extends cc.Component {
     onClickBack() {
         this.back.active = this.viewMap[this.showIndex].active = false;
         this.menu.active = true;
+        this.menuRapidListView.updateView(this.buttonList.length, 0);
     }
 
 
