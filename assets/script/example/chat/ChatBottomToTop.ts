@@ -35,7 +35,7 @@ export default class ChatBottomToTop extends cc.Component {
 
             chatArray.push(data);
         }
-
+        chatArray[0].text = CHAT_ARRAY[5];
         this.chatRapidListView.init(index => {
             return chatArray[index];
         });

@@ -28,7 +28,7 @@
       }
     ],
     "_active": true,
-    "_level": 1,
+    "_level": 2,
     "_components": [
       {
         "__id__": 92
@@ -2424,12 +2424,12 @@
     "_anchorPoint": {
       "__type__": "cc.Vec2",
       "x": 0.5,
-      "y": 0
+      "y": 1
     },
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -300,
+      "y": 0,
       "z": 0
     },
     "_scale": {
@@ -2594,7 +2594,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 40,
+      "y": -40,
       "z": 0
     },
     "_scale": {
@@ -2887,7 +2887,7 @@
     "_id": ""
   },
   {
-    "__type__": "958749qA09FVIb9W7zuL+1Q",
+    "__type__": "0f6a76p4ptKqY2kTynI1k/T",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -2946,7 +2946,7 @@
     "_N$paddingBottom": 10,
     "_N$spacingX": 0,
     "_N$spacingY": 5,
-    "_N$verticalDirection": 0,
+    "_N$verticalDirection": 1,
     "_N$horizontalDirection": 0,
     "_N$affectedByScale": false,
     "_id": ""
@@ -3081,9 +3081,9 @@
     "_itemTemplateType": 1,
     "_rollDirectionType": 1,
     "_layoutType": 2,
-    "_verticalDirection": 0,
+    "_verticalDirection": 1,
     "_horizontalDirection": 0,
-    "isAdaptionSize": false,
+    "isAdaptionSize": true,
     "_id": ""
   },
   {

@@ -65,8 +65,12 @@ export default class RapidScroll extends RapidBase {
 
     private onItemSizeChange(index: number, itemSize: cc.Size) {
         this.rapidListView.rapidData.updateItemSize(index, itemSize);
-        this.showItemMap[index].updatePosition(this.rapidListView.rapidData.updatePosition(index));
-        this.content.height = this.rapidListView.rapidData.layoutData.contentHeight;
+        this.setContentSize();
+
+        while(this.showItemMap[index]) {
+            this.showItemMap[index].updatePosition();
+            index++;
+        }
     }
 
     private itemShow(index: number) {
@@ -159,9 +163,14 @@ export default class RapidScroll extends RapidBase {
         return isNaN(c) ? 0 : c;
     }
 
-    updateLayout(toOffset?: number) {
+    private setContentSize() {
         let layoutData: RapidLayoutData = this.rapidListView.rapidData.layoutData;
         this.rapidListView.getIsVerticalRoll() ? (this.content.height = layoutData.contentHeight) : (this.content.width = layoutData.contentHeight);
+    }
+
+    updateLayout(toOffset?: number) {
+        this.setContentSize();
+        let layoutData: RapidLayoutData = this.rapidListView.rapidData.layoutData;
 
         for (let i = 0; i < layoutData.showItemNum; i++) {
             this.itemShow(i);
@@ -175,13 +184,12 @@ export default class RapidScroll extends RapidBase {
         // 以创建的起始位置作为0
         !this.rapidListView.getIsPositiveSort() && (offset = 1 - offset);
         let v2 = this.rapidListView.getIsVerticalRoll() ? cc.v2(0, offset * maxOffset.y) : cc.v2(offset * maxOffset.x, 0);
-
         this.scrollView.scrollToOffset(v2, time);
 
         if (offset === 0 || offset === 1) {
             this.scheduleOnce(() => {
                 let scrollOffset = this.getScrollOffsetRate();
-                scrollOffset > 0 && scrollOffset < 1 && this.scrollToOffset(offset, time);
+                scrollOffset > 0 && scrollOffset < 1 && this.scrollToOffset(offset, 0.05);
             }, time)
         }
     }
@@ -189,7 +197,17 @@ export default class RapidScroll extends RapidBase {
     scrollToIndex(index: number, time: number) {
         let maxOffset = this.scrollView.getMaxScrollOffset();
         let itemData: RapidItemData = this.rapidListView.rapidData.getItemData(index);
-        let offset = this.rapidListView.getIsVerticalRoll() ? itemData.position.y / maxOffset.y : itemData.position.x / maxOffset.x;
+        let targetPos = cc.v2(itemData.position.x, itemData.position.y);
+        let offset: number;
+
+        if (this.rapidListView.getIsVerticalRoll()) {
+            targetPos.y = Math.abs(targetPos.y) - this.node.height / 2;
+            offset = targetPos.y / maxOffset.y;
+        }
+        else {
+            targetPos.x = Math.abs(targetPos.x) - this.node.width / 2;
+            offset = targetPos.x / maxOffset.x;
+        }
 
         this.scrollToOffset(offset, time);
     }
