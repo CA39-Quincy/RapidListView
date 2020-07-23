@@ -93,11 +93,23 @@ export default class RapidListView extends cc.Component {
         tooltip: CC_DEV && "item排序类型，不允许选择“NONE”类型"
     })
     protected set layoutType(val: cc.Layout.Type) {
-        if (val === cc.Layout.Type.NONE) {
-            cc.warn("请重新选择Layout Type，不允许选择“NONE”类型！！！");
+        let errorTypeIndex = [
+            val === cc.Layout.Type.NONE,
+            this.rollDirectionType === RapidRollDirection.VERTICAL &&  val === cc.Layout.Type.HORIZONTAL,
+            this.rollDirectionType === RapidRollDirection.HORIZONTAL &&  val === cc.Layout.Type.VERTICAL,
+        ].indexOf(true);
+
+        if (errorTypeIndex > -1) {
+            let warnTipsArray = [
+                "不允许选择“NONE”类型！",
+                "RollDirectionType为垂直滚动时，不允许选择“HORIZONTAL”排序类型！",
+                "RollDirectionType为水平滚动时，不允许选择“VERTICAL”排序类型！",
+            ];
+            cc.warn("请重新选择Layout Type，" + warnTipsArray[errorTypeIndex]);
 
             return;
         }
+
         this._layoutType = val;
         this.updateProperty();
     }
@@ -143,13 +155,25 @@ export default class RapidListView extends cc.Component {
         return this._horizontalDirection;
     }
 
-
+    @property
+    private _isAdaptionSize: boolean = false;
     @property({
         tooltip: CC_DEV && "是否自适应content宽高"
     })
-    protected isAdaptionSize: boolean = false;
+    protected set isAdaptionSize(val: boolean) {
+        if (this.layoutType === cc.Layout.Type.GRID) {
+            cc.warn("自适应不支持LayoutType为GRID网格布局类型");
 
-    private itemEventCallFunc: Function = null;
+            return;
+        }
+        this._isAdaptionSize = val;
+    }
+
+    protected get isAdaptionSize(): boolean {
+        return this._isAdaptionSize;
+    }
+
+    private itemEventCallFunc: (eventName: any, data: any) => {} = null;
     private getItemDataCallFunc: (index: number) => {} = null;
 
     public rapidScroll: RapidScroll;
@@ -210,6 +234,10 @@ export default class RapidListView extends cc.Component {
         this.updateProperty();
     }
 
+    /**
+     * 初始化，仅调用一次
+     * @param {(index: number) => {}} getItemDataCallFunc
+     */
     init(getItemDataCallFunc?: (index: number) => {}) {
         this.getItemDataCallFunc = getItemDataCallFunc;
         this.itemTemplateNode && (this.itemTemplateNode.active = false);
@@ -223,61 +251,92 @@ export default class RapidListView extends cc.Component {
         this.rapidScroll.init(this);
     }
 
+    /**
+     * 更新视图，当数据长度有变化的时候需要调用刷新
+     * @param {number} itemCount item数据数组长度
+     * @param {number} toOffset 显示在指定的百分比位置，范围值：0~1，不穿参默认为0
+     */
     updateView(itemCount: number, toOffset?: number) {
         this.rapidData.updateDataArray(itemCount);
         this.rapidScroll.updateLayout(toOffset);
     }
 
+    // 获取item模板，组件内部调用，外部逻辑不要调用！
     getItemTemplate(): cc.Node | cc.Prefab | any {
         return this.itemTemplateType === RapidItemTemplateType.NODE ? this.itemTemplateNode : this.itemTemplatePrefab;
     }
 
+    // 获取item模板节点，组件内部调用，外部逻辑不要调用！
     getItemTemplateNode(): cc.Node {
         let item = this.getItemTemplate();
 
         return this.itemTemplateType === RapidItemTemplateType.NODE ? item : item.data;
     }
 
+    // 获取item模板脚本，组件内部调用，外部逻辑不要调用！
     getItemTemplateScript(): RapidItemBase {
         let item = this.getItemTemplate();
 
         return this.itemTemplateType === RapidItemTemplateType.NODE ? item.getComponent(RapidItemBase) : item.data.getComponent(RapidItemBase);
     }
 
+    // 获取Item监听事件，组件内部调用，外部逻辑不要调用！
+    getItemEvent(): (eventName: any, data: any) => {} {
+        return this.itemEventCallFunc;
+    }
+
+    // 获取Item数据，组件内部调用，外部逻辑不要调用！
+    getItemData(index: number) {
+        return this.getItemDataCallFunc ? this.getItemDataCallFunc(index) : null;
+    }
+
+    // 获取滚动方向类型
     getRollDirectionType(): RapidRollDirection {
         return this.rollDirectionType;
     }
 
+    // 是否为垂直滚动，反之为水平滚动
     getIsVerticalRoll() {
         return this.rollDirectionType === RapidRollDirection.VERTICAL;
     }
 
+    // 是否为正向排序， 正向排序：水平滚动 && 从左到右排序 || 垂直滚动 && 从上到下排序
     getIsPositiveSort() {
         return (this.rollDirectionType === RapidRollDirection.HORIZONTAL && this.horizontalDirection === cc.Layout.HorizontalDirection.LEFT_TO_RIGHT)
             || (this.rollDirectionType === RapidRollDirection.VERTICAL && this.verticalDirection === cc.Layout.VerticalDirection.TOP_TO_BOTTOM);
     }
 
+    // 是否自适应宽高
     getIsAdaptionSize(): boolean {
         return this.isAdaptionSize;
     }
 
-    getItemEvent(): Function {
-        return this.itemEventCallFunc;
-    }
-
-    getItemData(index: number) {
-        return this.getItemDataCallFunc ? this.getItemDataCallFunc(index) : null;
-    }
-
+    /**
+     * 滚动到视图百分比位置
+     * 起始位置以item为起始方向，offset值为0
+     * @param {number} offset 滚动范围值：0~1
+     * @param {number} time 滚动到指定位置需要的时间
+     */
     scrollToOffset(offset: number, time: number) {
         this.rapidScroll.scrollToOffset(offset, time);
     }
 
+    /**
+     * 滚动到指定数组下标item
+     * @param {number} index item数组下标
+     * @param {number} time 滚动到指定位置需要的时间
+     */
     scrollToIndex(index: number, time: number) {
         this.rapidScroll.scrollToIndex(index, time);
     }
 
-    addListenItemEvent(callFunc: Function) {
+    /**
+     * 添加item事件监听，调用事件回调：RapidItemBase.onItemEvent()
+     * eventName: 事件名称
+     * data: 数据
+     * @param {(eventName: any, data: any) => {}} callFunc
+     */
+    addListenItemEvent(callFunc: (eventName: any, data: any) => {}) {
         this.itemEventCallFunc = callFunc;
     }
 }

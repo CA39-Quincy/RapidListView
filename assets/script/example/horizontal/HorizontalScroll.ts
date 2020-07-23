@@ -1,5 +1,4 @@
 import RapidListView from "../../rapidListView/RapidListView";
-import {RapidToPositionType} from "../../rapidListView/enum/RapidEnum";
 
 const {ccclass, property} = cc._decorator;
 

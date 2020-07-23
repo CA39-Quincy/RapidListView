@@ -49,8 +49,9 @@ export default class ChatItem extends RapidItemBase {
         !this.isInit && this.init();
 
         for(let i = 0, iLength = this.layerArray.length; i < iLength; i++) {
-            this.layerArray[i].getChildByName("Time").active = itemData.type === ChatTargetType.TIME;
-            this.layerArray[i].getChildByName("Chat").active = itemData.type !== ChatTargetType.TIME;
+            let parent = i === 0 ? this.layerArray[0].children[0] : this.layerArray[i];
+            parent.getChildByName("Time").active = itemData.type === ChatTargetType.TIME;
+            parent.getChildByName("Chat").active = itemData.type !== ChatTargetType.TIME;
         }
 
         if(itemData.type === ChatTargetType.TIME) {

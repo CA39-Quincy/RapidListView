@@ -83,10 +83,6 @@ export default class RapidData extends RapidBase {
     }
 
     getItemData(index: number): RapidItemData {
-        if (index < 0) {
-            return null;
-        }
-
         if (this.itemDataArray[index]) {
             return this.itemDataArray[index];
         }
@@ -103,7 +99,7 @@ export default class RapidData extends RapidBase {
     }
 
     private getItemPosition(index: number): cc.Vec2 {
-        let isRollVertical = this.rapidListView.getRollDirectionType() === RapidRollDirection.VERTICAL;
+        let isRollVertical = this.rapidListView.getIsVerticalRoll();
         // 从上到下排序
         let isTopToBottom = this.layout.verticalDirection === cc.Layout.VerticalDirection.TOP_TO_BOTTOM;
         // 从左到右

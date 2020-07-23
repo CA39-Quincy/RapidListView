@@ -52,9 +52,8 @@ export default class RapidScroll extends RapidBase {
 
     private createLayer() {
         let rapidItem: RapidItemBase = this.rapidListView.getItemTemplateScript();
-        let itemLayers: cc.Node[] = rapidItem.getLayerArray();
 
-        for (let i = 0, len = itemLayers.length; i < len; i++) {
+        for (let i = 0, len = rapidItem.getLayerCount(); i < len; i++) {
             let layerNode = new cc.Node("Layer" + i);
             this.content.addChild(layerNode);
             layerNode.setPosition(0, 0);

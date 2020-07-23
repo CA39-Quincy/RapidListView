@@ -1,5 +1,4 @@
 import RapidListView from "../../rapidListView/RapidListView";
-import {RapidToPositionType} from "../../rapidListView/enum/RapidEnum";
 import {ChatData, ChatTargetType} from "./ChatConst";
 
 const CHAT_ARRAY = [

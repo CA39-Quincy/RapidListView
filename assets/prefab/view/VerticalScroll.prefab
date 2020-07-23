@@ -28,7 +28,7 @@
       }
     ],
     "_active": true,
-    "_level": 2,
+    "_level": 1,
     "_components": [
       {
         "__id__": 92
@@ -406,7 +406,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 300,
+      "width": 280,
       "height": 80
     },
     "_anchorPoint": {
@@ -417,7 +417,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 0,
+      "y": 125,
       "z": 0
     },
     "_scale": {
@@ -882,14 +882,6 @@
       "__id__": 13
     },
     "_enabled": true,
-    "layerArray": [
-      {
-        "__id__": 14
-      },
-      {
-        "__id__": 16
-      }
-    ],
     "indexLab": {
       "__id__": 18
     },
@@ -916,11 +908,11 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 300,
+      "width": 280,
       "height": 80
     },
     "_resize": 1,
-    "_N$layoutType": 2,
+    "_N$layoutType": 1,
     "_N$padding": 0,
     "_N$cellSize": {
       "__type__": "cc.Size",
@@ -1068,10 +1060,10 @@
     "itemTemplatePrefab": null,
     "_itemTemplateType": 1,
     "_rollDirectionType": 1,
-    "_layoutType": 2,
+    "_layoutType": 1,
     "_verticalDirection": 1,
     "_horizontalDirection": 0,
-    "isAdaptionSize": false,
+    "_isAdaptionSize": false,
     "_id": ""
   },
   {
@@ -1888,14 +1880,6 @@
       "__id__": 43
     },
     "_enabled": true,
-    "layerArray": [
-      {
-        "__id__": 44
-      },
-      {
-        "__id__": 46
-      }
-    ],
     "indexLab": {
       "__id__": 48
     },
@@ -2077,7 +2061,7 @@
     "_layoutType": 3,
     "_verticalDirection": 0,
     "_horizontalDirection": 1,
-    "isAdaptionSize": false,
+    "_isAdaptionSize": false,
     "_id": ""
   },
   {
@@ -2894,14 +2878,6 @@
       "__id__": 73
     },
     "_enabled": true,
-    "layerArray": [
-      {
-        "__id__": 74
-      },
-      {
-        "__id__": 76
-      }
-    ],
     "indexLab": {
       "__id__": 78
     },
@@ -3083,7 +3059,7 @@
     "_layoutType": 2,
     "_verticalDirection": 1,
     "_horizontalDirection": 0,
-    "isAdaptionSize": true,
+    "_isAdaptionSize": true,
     "_id": ""
   },
   {
