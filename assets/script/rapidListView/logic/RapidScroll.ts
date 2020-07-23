@@ -66,7 +66,7 @@ export default class RapidScroll extends RapidBase {
         this.rapidListView.rapidData.updateItemSize(index, itemSize);
         this.setContentSize();
 
-        while(this.showItemMap[index]) {
+        while (this.showItemMap[index]) {
             this.showItemMap[index].updatePosition();
             index++;
         }
@@ -180,12 +180,12 @@ export default class RapidScroll extends RapidBase {
 
     scrollToOffset(offset: number, time: number) {
         let maxOffset = this.scrollView.getMaxScrollOffset();
+        let offset2 = this.rapidListView.getIsPositiveSort() ? offset : 1 - offset;
         // 以创建的起始位置作为0
-        !this.rapidListView.getIsPositiveSort() && (offset = 1 - offset);
-        let v2 = this.rapidListView.getIsVerticalRoll() ? cc.v2(0, offset * maxOffset.y) : cc.v2(offset * maxOffset.x, 0);
+        let v2 = this.rapidListView.getIsVerticalRoll() ? cc.v2(0, offset2 * maxOffset.y) : cc.v2(offset2 * maxOffset.x, 0);
         this.scrollView.scrollToOffset(v2, time);
 
-        if (offset === 0 || offset === 1) {
+        if (offset2 === 0 || offset2 === 1) {
             this.scheduleOnce(() => {
                 let scrollOffset = this.getScrollOffsetRate();
                 scrollOffset > 0 && scrollOffset < 1 && this.scrollToOffset(offset, 0.05);
@@ -209,5 +209,37 @@ export default class RapidScroll extends RapidBase {
         }
 
         this.scrollToOffset(offset, time);
+    }
+
+    removeItem(index: number) {
+        this.rapidListView.rapidData.removeItemData(index);
+
+        if (this.showItemMap[index]) {
+            this.showItemMap[index].removeAnimation().then(() => {
+                this.itemHide(index);
+
+                while (true) {
+                    if (!this.showItemMap[index + 1]) {
+                        this.itemShow(index);
+
+                        break;
+                    }
+
+                    this.showItemMap[index] = this.showItemMap[index + 1];
+                    this.showItemMap[index].changeIndexAnimation();
+
+                    index++;
+                }
+            })
+        }
+        else {
+            let i;
+            for (i in this.showItemMap) {
+                i = Number(i);
+                this.showItemMap[i - 1] = this.showItemMap[i];
+                this.showItemMap[i].changeIndexAnimation();
+            }
+            this.itemShow(i);
+        }
     }
 }

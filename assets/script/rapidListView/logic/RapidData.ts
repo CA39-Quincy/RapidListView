@@ -98,6 +98,21 @@ export default class RapidData extends RapidBase {
         return this.itemDataArray[index];
     }
 
+    removeItemData(index: number) {
+        // 删除item后，是否自适应宽高的坐标补位算法不一样
+        if(this.rapidListView.getIsAdaptionSize()) {
+            this.updateItemSize(index, cc.size(-this.layout.spacingX, -this.layout.spacingY));
+        }
+        else {
+            for(let i = this.itemDataArray.length - 1, iLength = index; i > iLength; i--) {
+                let lastPosition = this.itemDataArray[i - 1].position;
+                this.itemDataArray[i].position = cc.v2(lastPosition.x, lastPosition.y);
+            }
+        }
+
+        this.itemDataArray.splice(index, 1);
+    }
+
     private getItemPosition(index: number): cc.Vec2 {
         let isRollVertical = this.rapidListView.getIsVerticalRoll();
         // 从上到下排序

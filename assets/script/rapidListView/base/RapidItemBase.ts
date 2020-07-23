@@ -11,11 +11,11 @@ export default class RapidItemBase extends cc.Component {
     private itemEventCallFunc: (eventName: any, data: any) => {} = null;
 
     private initLayerArray() {
-        if(this.layerArray.length > 0) {
+        if (this.layerArray.length > 0) {
             return;
         }
 
-        for(let i = 0, iLength = this.node.childrenCount; i < iLength; i++) {
+        for (let i = 0, iLength = this.node.childrenCount; i < iLength; i++) {
             this.layerArray.push(i === 0 ? this.node : this.node.children[i]);
         }
     }
@@ -41,6 +41,7 @@ export default class RapidItemBase extends cc.Component {
 
         for (let i = 0; i < layerParentArray.length; i++) {
             let node = this.layerArray[i];
+            node.active = true;
             node.parent = layerParentArray[i];
             node.setPosition(rapidItemData.position);
         }
@@ -59,6 +60,37 @@ export default class RapidItemBase extends cc.Component {
         this.sizeChangeCallFunc = null;
         this.itemEventCallFunc = null;
         this.rapidItemData = null;
+    }
+
+    /**
+     * @override
+     * 作为单个item被移除时播放的动画效果
+     * @returns {Promise<any>}
+     */
+    removeAnimation() {
+        return new Promise(resolve => {
+            this.layerArray.forEach(element => {
+                element.active = false;
+            });
+            resolve();
+
+            // let actionIndex = 0;
+            // this.layerArray.forEach(element => {
+            //     element.runAction(cc.sequence(
+            //         cc.scaleTo(0.2, 0),
+            //         cc.callFunc(() => {
+            //             ++actionIndex === this.layerArray.length && resolve();
+            //         })
+            //     ))
+            // })
+        })
+    }
+
+    changeIndexAnimation() {
+        // this.layerArray.forEach(element => {
+        //     element.runAction(cc.moveTo(0.2, this.rapidItemData.position));
+        // });
+        this.updatePosition();
     }
 
     updatePosition() {

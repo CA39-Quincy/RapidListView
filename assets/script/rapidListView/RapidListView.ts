@@ -330,6 +330,10 @@ export default class RapidListView extends cc.Component {
         this.rapidScroll.scrollToIndex(index, time);
     }
 
+    removeItem(index: number) {
+        this.rapidScroll.removeItem(index);
+    }
+
     /**
      * 添加item事件监听，调用事件回调：RapidItemBase.onItemEvent()
      * eventName: 事件名称

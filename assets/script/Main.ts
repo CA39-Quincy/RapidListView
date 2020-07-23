@@ -35,6 +35,7 @@ export default class Main extends cc.Component {
             {text: "垂直滚动列表"},
             {text: "水平滚动列表"},
             {text: "聊天"},
+            {text: "增删Item"},
         ];
 
         this.menuRapidListView.init(index => {

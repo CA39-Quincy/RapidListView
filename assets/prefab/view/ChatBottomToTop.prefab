@@ -715,6 +715,8 @@
       "__id__": 2
     },
     "_enabled": true,
+    "_anchorX": 0.5,
+    "_anchorY": 0.5,
     "itemTemplateNode": null,
     "itemTemplatePrefab": {
       "__uuid__": "5d4cc0b6-dada-4df1-9c30-4c0e811dcaec"
@@ -724,7 +726,7 @@
     "_layoutType": 2,
     "_verticalDirection": 0,
     "_horizontalDirection": 0,
-    "isAdaptionSize": true,
+    "_isAdaptionSize": true,
     "_id": ""
   },
   {
