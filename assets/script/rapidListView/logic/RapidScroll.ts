@@ -212,25 +212,43 @@ export default class RapidScroll extends RapidBase {
     addItem(index: number) {
         this.rapidListView.rapidData.addItemData(index);
         let keyArray = Object.keys(this.showItemMap);
-        let key;
+        let key, changeIndex = 0, changeCount = 0;
+
+        let changeEnd = () => {
+            // 多余的一个item回池
+            if (index < this.rapidListView.rapidData.getItemCount() - 1) {
+                let redundantIndex = Number(keyArray[keyArray.length - 1]) + 1;
+                !this.checkIsInView(this.showItemMap[redundantIndex].node) && this.itemHide(redundantIndex);
+            }
+
+            // key > index ? this.itemShow(key) : this.itemShow(index);
+            if (key > index) {
+                this.itemShow(key)
+            }
+            else {
+                this.itemShow(index);
+                this.showItemMap[index].addAnimation().then(() => {
+                })
+            }
+
+            this.setContentSize();
+        };
 
         for (let i = keyArray.length - 1; i >= 0; i--) {
             key = Number(keyArray[i]);
 
+            if(i === keyArray.length - 1 && key < index) {
+                changeEnd();
+
+                break;
+            }
+
             if (key >= index) {
+                changeCount++;
                 this.showItemMap[key + 1] = this.showItemMap[key];
-                this.showItemMap[key].changeIndexAnimation();
+                this.showItemMap[key + 1].changeIndexAnimation().then(() => ++changeIndex === changeCount && changeEnd());
             }
         }
-
-        // 多余的一个item回池
-        if(index < this.rapidListView.rapidData.getItemCount() - 1) {
-            let redundantIndex = Number(keyArray[keyArray.length - 1]) + 1;
-            !this.checkIsInView(this.showItemMap[redundantIndex].node) && this.itemHide(redundantIndex);
-        }
-
-        key > index ? this.itemShow(key) : this.itemShow(index);
-        this.setContentSize();
     }
 
     removeItem(index: number) {

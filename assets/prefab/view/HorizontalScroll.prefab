@@ -28,7 +28,7 @@
       }
     ],
     "_active": true,
-    "_level": 2,
+    "_level": 1,
     "_components": [
       {
         "__id__": 94
@@ -885,14 +885,6 @@
       "__id__": 13
     },
     "_enabled": true,
-    "layerArray": [
-      {
-        "__id__": 14
-      },
-      {
-        "__id__": 16
-      }
-    ],
     "indexLab": {
       "__id__": 18
     },
@@ -1106,7 +1098,7 @@
     "_layoutType": 1,
     "_verticalDirection": 1,
     "_horizontalDirection": 0,
-    "isAdaptionSize": false,
+    "_isAdaptionSize": false,
     "_id": ""
   },
   {
@@ -1926,14 +1918,6 @@
       "__id__": 44
     },
     "_enabled": true,
-    "layerArray": [
-      {
-        "__id__": 45
-      },
-      {
-        "__id__": 47
-      }
-    ],
     "indexLab": {
       "__id__": 49
     },
@@ -2147,7 +2131,7 @@
     "_layoutType": 1,
     "_verticalDirection": 1,
     "_horizontalDirection": 1,
-    "isAdaptionSize": true,
+    "_isAdaptionSize": true,
     "_id": ""
   },
   {
@@ -2964,14 +2948,6 @@
       "__id__": 75
     },
     "_enabled": true,
-    "layerArray": [
-      {
-        "__id__": 76
-      },
-      {
-        "__id__": 78
-      }
-    ],
     "indexLab": {
       "__id__": 80
     },
@@ -3153,7 +3129,7 @@
     "_layoutType": 3,
     "_verticalDirection": 1,
     "_horizontalDirection": 0,
-    "isAdaptionSize": false,
+    "_isAdaptionSize": false,
     "_id": ""
   },
   {

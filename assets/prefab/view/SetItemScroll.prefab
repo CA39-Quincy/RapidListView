@@ -1530,7 +1530,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "VerticalItem2",
+    "_name": "SetItem",
     "_objFlags": 0,
     "_parent": {
       "__id__": 39
@@ -1870,7 +1870,7 @@
     "_id": ""
   },
   {
-    "__type__": "958749qA09FVIb9W7zuL+1Q",
+    "__type__": "49d45QGK9FM4JkE0KDjR+Fm",
     "_name": "",
     "_objFlags": 0,
     "node": {

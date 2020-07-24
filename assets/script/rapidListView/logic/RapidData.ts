@@ -87,10 +87,6 @@ export default class RapidData extends RapidBase {
         }
     }
 
-    getItemCount() {
-        return this.itemCount;
-    }
-
     getItemData(index: number): RapidItemData {
         if (this.itemDataArray[index]) {
             return this.itemDataArray[index];
@@ -112,19 +108,30 @@ export default class RapidData extends RapidBase {
         let itemData = this.getItemData(index);
         let isVertical = this.rapidListView.getIsVerticalRoll();
 
-        this.updateOtherSize(index, isVertical ? itemData.size.height + this.layout.spacingY : itemData.size.width + this.layout.spacingX, true);
+        this.layout.type !== cc.Layout.Type.GRID && this.updateOtherSize(index, isVertical ? itemData.size.height + this.layout.spacingY : itemData.size.width + this.layout.spacingX, true);
 
         for (let i = index + 1, iLength = this.itemDataArray.length; i < iLength; i++) {
-            // this.itemDataArray[i].position = this.getItemPosition(i);
             this.itemDataArray[i].index = i;
+            this.layout.type === cc.Layout.Type.GRID && (this.itemDataArray[i].position = this.getItemPosition(i))
         }
 
-        if (this.rapidListView.getIsVerticalRoll())
-            this.layoutData.contentHeight += itemData.size.height + this.layout.spacingY;
-        else
-            this.layoutData.contentHeight += itemData.size.width + this.layout.spacingX;
-
         this.itemCount++;
+
+        // 视图滚动的高度改变，布局上网格和单行单列的计算方式不一样
+        if(this.layout.type === cc.Layout.Type.GRID) {
+            let itemNode = this.rapidListView.getItemTemplateNode();
+            let itemHeight = isVertical ? itemNode.height : itemNode.width;
+            let spacingY = isVertical ? this.layout.spacingY : this.layout.spacingX;
+            let paddingVertical = isVertical ? this.layout.paddingTop + this.layout.paddingBottom : this.layout.paddingLeft + this.layout.paddingRight;
+            this.layoutData.contentHeight = Math.ceil(this.itemCount / this.layoutData.rowItemNum) * (itemHeight + spacingY) + paddingVertical - spacingY;
+        }
+        else {
+            if (this.rapidListView.getIsVerticalRoll())
+                this.layoutData.contentHeight += itemData.size.height + this.layout.spacingY;
+            else
+                this.layoutData.contentHeight += itemData.size.width + this.layout.spacingX;
+        }
+
     }
 
     removeItemData(index: number) {

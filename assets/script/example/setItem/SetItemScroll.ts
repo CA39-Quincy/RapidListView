@@ -12,6 +12,7 @@ export default class SetItemScroll extends cc.Component {
     rapidListView2: RapidListView = null;
 
     private dataArray1: any[] = [];
+    private dataArray2: any[] = [];
 
     onLoad () {
         window.SetItemScroll = this;
@@ -24,12 +25,13 @@ export default class SetItemScroll extends cc.Component {
             return this.dataArray1[index];
         });
 
-        let dataArray2 = [];
-        while (dataArray2.length < 200) {
-            dataArray2.push({num: dataArray2.length});
+        while (this.dataArray2.length < 200) {
+            this.dataArray2.push({num: this.dataArray2.length});
         }
 
-        this.rapidListView2.init();
+        this.rapidListView2.init(index => {
+            return this.dataArray2[index];
+        });
     }
 
     onEnable() {
@@ -45,5 +47,15 @@ export default class SetItemScroll extends cc.Component {
     removeItemData(index: number) {
         this.dataArray1.splice(index, 1);
         this.rapidListView1.removeItem(index);
+    }
+
+    addItemData2(index: number, num: number) {
+        this.dataArray2.splice(index, 0, {num: num});
+        this.rapidListView2.addItem(index);
+    }
+
+    removeItemData2(index: number) {
+        this.dataArray2.splice(index, 1);
+        this.rapidListView2.removeItem(index);
     }
 }

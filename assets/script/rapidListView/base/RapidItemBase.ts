@@ -5,8 +5,8 @@ export default class RapidItemBase extends cc.Component {
 
 
     protected rapidItemData: RapidItemData = null;
-
     protected layerArray: cc.Node[] = [];
+
     private sizeChangeCallFunc: (index: number, itemSize: cc.Size) => {} = null;
     private itemEventCallFunc: (eventName: any, data: any) => {} = null;
 
@@ -53,6 +53,7 @@ export default class RapidItemBase extends cc.Component {
 
     hide() {
         for (let i = 1; i < this.layerArray.length; i++) {
+            this.layerArray[i].stopAllActions();
             this.layerArray[i].parent = this.node;
         }
 
@@ -73,24 +74,20 @@ export default class RapidItemBase extends cc.Component {
                 element.active = false;
             });
             resolve();
+        })
+    }
 
-            // let actionIndex = 0;
-            // this.layerArray.forEach(element => {
-            //     element.runAction(cc.sequence(
-            //         cc.scaleTo(0.2, 0),
-            //         cc.callFunc(() => {
-            //             ++actionIndex === this.layerArray.length && resolve();
-            //         })
-            //     ))
-            // })
+    addAnimation() {
+        return new Promise(resolve => {
+            resolve();
         })
     }
 
     changeIndexAnimation() {
-        // this.layerArray.forEach(element => {
-        //     element.runAction(cc.moveTo(0.2, this.rapidItemData.position));
-        // });
-        this.updatePosition();
+        return new Promise(resolve => {
+            this.updatePosition();
+            resolve();
+        })
     }
 
     updatePosition() {
