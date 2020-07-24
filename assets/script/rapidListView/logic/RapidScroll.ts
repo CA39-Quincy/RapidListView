@@ -89,6 +89,15 @@ export default class RapidScroll extends RapidBase {
         delete this.showItemMap[index];
     }
 
+    // 检测是否在屏幕内
+    checkIsInView(node: cc.Node): boolean {
+        let worldPosition = node.convertToWorldSpaceAR(cc.v2(-(node.width * node.anchorX), -(node.height * node.anchorY)));
+        let rect = new cc.Rect(worldPosition.x, worldPosition.y, node.width, node.height);
+        let intersects = this.viewRect.intersects(rect);
+
+        return intersects
+    }
+
     /**
      *
      * @param {boolean} isPositive 是否为正方向滚动
@@ -101,25 +110,13 @@ export default class RapidScroll extends RapidBase {
         isPositive = (isPositive && layoutData.isPositiveDirection) || (!isPositive && !layoutData.isPositiveDirection);
         let itemIndex = Number(itemKeyArray[isPositive ? 0 : itemKeyArray.length - 1]);
 
-        // 检测是否在屏幕内
-        let checkIsInViewFunc = (node: cc.Node, index): boolean => {
-
-            let worldPosition = node.convertToWorldSpaceAR(cc.v2(-(node.width * node.anchorX), -(node.height * node.anchorY)));
-            let b = new cc.Rect(worldPosition.x, worldPosition.y, node.width, node.height);
-            let c = this.viewRect.intersects(b);
-
-            // cc.log("相交判断", index, c, this.viewRect, b, node.getPosition());
-
-            return c;
-        };
-
         let checkShowItemFunc = (index: number) => {
             let showIndex = index + (isPositive ? 1 : -1);
 
             while (showIndex >= 0 && showIndex < this.rapidListView.rapidData.getItemCount()) {
                 // 预先在屏幕外充填一个
                 !this.showItemMap[showIndex] && this.itemShow(showIndex);
-                let isInView = checkIsInViewFunc(this.showItemMap[showIndex].node, showIndex);
+                let isInView = this.checkIsInView(this.showItemMap[showIndex].node);
 
                 if (!isInView) {
 
@@ -130,7 +127,7 @@ export default class RapidScroll extends RapidBase {
             }
         };
 
-        while (this.showItemMap[itemIndex] && !checkIsInViewFunc(this.showItemMap[itemIndex].node, itemIndex)) {
+        while (this.showItemMap[itemIndex] && !this.checkIsInView(this.showItemMap[itemIndex].node)) {
             itemKeyArray.length > 1 && this.itemHide(itemIndex);
             checkShowItemFunc(itemIndex);
 
@@ -143,7 +140,7 @@ export default class RapidScroll extends RapidBase {
     private onRollEvent() {
         let differPosition = this.content.position.sub(this.contentPastPos);
         let scrollOffset = this.getScrollOffsetRate();
-        // cc.log("rrrrrrr", this.content.position, this.content.height, differPosition.mag());
+        // cc.log("onRollEvent", this.content.position, this.content.height, differPosition.mag());
 
         if (differPosition.mag() > 10 && scrollOffset >= 0 && scrollOffset <= 1) {
             this.contentPastPos = this.content.position;
@@ -161,6 +158,7 @@ export default class RapidScroll extends RapidBase {
 
         return isNaN(c) ? 0 : c;
     }
+
 
     private setContentSize() {
         let layoutData: RapidLayoutData = this.rapidListView.rapidData.layoutData;
@@ -211,9 +209,34 @@ export default class RapidScroll extends RapidBase {
         this.scrollToOffset(offset, time);
     }
 
+    addItem(index: number) {
+        this.rapidListView.rapidData.addItemData(index);
+        let keyArray = Object.keys(this.showItemMap);
+        let key;
+
+        for (let i = keyArray.length - 1; i >= 0; i--) {
+            key = Number(keyArray[i]);
+
+            if (key >= index) {
+                this.showItemMap[key + 1] = this.showItemMap[key];
+                this.showItemMap[key].changeIndexAnimation();
+            }
+        }
+
+        // 多余的一个item回池
+        if(index < this.rapidListView.rapidData.getItemCount() - 1) {
+            let redundantIndex = Number(keyArray[keyArray.length - 1]) + 1;
+            !this.checkIsInView(this.showItemMap[redundantIndex].node) && this.itemHide(redundantIndex);
+        }
+
+        key > index ? this.itemShow(key) : this.itemShow(index);
+        this.setContentSize();
+    }
+
     removeItem(index: number) {
         this.rapidListView.rapidData.removeItemData(index);
 
+        // 如果移除的item在视图内
         if (this.showItemMap[index]) {
             this.showItemMap[index].removeAnimation().then(() => {
                 this.itemHide(index);
@@ -239,7 +262,17 @@ export default class RapidScroll extends RapidBase {
                 this.showItemMap[i - 1] = this.showItemMap[i];
                 this.showItemMap[i].changeIndexAnimation();
             }
-            this.itemShow(i);
+
+
+            if (i < this.rapidListView.rapidData.getItemCount()) {
+                this.itemShow(i)
+            }
+            else {
+                let keyArray = Object.keys(this.showItemMap);
+                this.itemShow(Number(keyArray[0]) - 1);
+            }
         }
+
+        this.setContentSize();
     }
 }

@@ -1,5 +1,4 @@
 import RapidBase from "../base/RapidBase";
-import {RapidRollDirection} from "../enum/RapidEnum";
 
 const {ccclass, property} = cc._decorator;
 
@@ -61,25 +60,35 @@ export default class RapidData extends RapidBase {
 
         this.itemDataArray[index].size = size;
         this.layoutData.contentHeight += sizeDiffer;
+        this.updateOtherSize(index, sizeDiffer, false);
+    }
+
+    updateOtherSize(index: number, sizeDiffer, isSkipIndex: boolean) {
+        let isVertical = this.rapidListView.getIsVerticalRoll();
 
         for (let i = index, iLength = this.itemDataArray.length; i < iLength; i++) {
             let itemData = this.itemDataArray[i];
-            if (itemData) {
-                if (i === index) {
-                    let tempItem = this.rapidListView.getItemTemplateNode();
-                    if (isVertical)
-                        this.rapidListView.getIsPositiveSort() ? itemData.position.y -= sizeDiffer * (1 - tempItem.anchorY) : itemData.position.y += sizeDiffer * tempItem.anchorY;
-                    else
-                        this.rapidListView.getIsPositiveSort() ? itemData.position.x += sizeDiffer * tempItem.anchorX : itemData.position.x -= sizeDiffer * tempItem.anchorX;
-                }
-                else {
-                    if (isVertical)
-                        this.rapidListView.getIsPositiveSort() ? itemData.position.y -= sizeDiffer : itemData.position.y += sizeDiffer;
-                    else
-                        this.rapidListView.getIsPositiveSort() ? itemData.position.x += sizeDiffer : itemData.position.x -= sizeDiffer;
-                }
+
+            if (i === index && isSkipIndex) continue;
+
+            if (i === index) {
+                let tempItem = this.rapidListView.getItemTemplateNode();
+                if (isVertical)
+                    this.rapidListView.getIsPositiveSort() ? itemData.position.y -= sizeDiffer * (1 - tempItem.anchorY) : itemData.position.y += sizeDiffer * tempItem.anchorY;
+                else
+                    this.rapidListView.getIsPositiveSort() ? itemData.position.x += sizeDiffer * tempItem.anchorX : itemData.position.x -= sizeDiffer * tempItem.anchorX;
+            }
+            else {
+                if (isVertical)
+                    this.rapidListView.getIsPositiveSort() ? itemData.position.y -= sizeDiffer : itemData.position.y += sizeDiffer;
+                else
+                    this.rapidListView.getIsPositiveSort() ? itemData.position.x += sizeDiffer : itemData.position.x -= sizeDiffer;
             }
         }
+    }
+
+    getItemCount() {
+        return this.itemCount;
     }
 
     getItemData(index: number): RapidItemData {
@@ -98,19 +107,46 @@ export default class RapidData extends RapidBase {
         return this.itemDataArray[index];
     }
 
+    addItemData(index: number) {
+        this.itemDataArray.splice(index, 0, null);
+        let itemData = this.getItemData(index);
+        let isVertical = this.rapidListView.getIsVerticalRoll();
+
+        this.updateOtherSize(index, isVertical ? itemData.size.height + this.layout.spacingY : itemData.size.width + this.layout.spacingX, true);
+
+        for (let i = index + 1, iLength = this.itemDataArray.length; i < iLength; i++) {
+            // this.itemDataArray[i].position = this.getItemPosition(i);
+            this.itemDataArray[i].index = i;
+        }
+
+        if (this.rapidListView.getIsVerticalRoll())
+            this.layoutData.contentHeight += itemData.size.height + this.layout.spacingY;
+        else
+            this.layoutData.contentHeight += itemData.size.width + this.layout.spacingX;
+
+        this.itemCount++;
+    }
+
     removeItemData(index: number) {
         // 删除item后，是否自适应宽高的坐标补位算法不一样
-        if(this.rapidListView.getIsAdaptionSize()) {
+        if (this.rapidListView.getIsAdaptionSize()) {
             this.updateItemSize(index, cc.size(-this.layout.spacingX, -this.layout.spacingY));
         }
         else {
-            for(let i = this.itemDataArray.length - 1, iLength = index; i > iLength; i--) {
+            for (let i = this.itemDataArray.length - 1, iLength = index; i > iLength; i--) {
                 let lastPosition = this.itemDataArray[i - 1].position;
                 this.itemDataArray[i].position = cc.v2(lastPosition.x, lastPosition.y);
+                this.itemDataArray[i].index = i - 1;
             }
         }
 
+        if (this.rapidListView.getIsVerticalRoll())
+            this.layoutData.contentHeight -= this.itemDataArray[index].size.height + this.layout.spacingY;
+        else
+            this.layoutData.contentHeight -= this.itemDataArray[index].size.width + this.layout.spacingX;
+
         this.itemDataArray.splice(index, 1);
+        this.itemCount--;
     }
 
     private getItemPosition(index: number): cc.Vec2 {

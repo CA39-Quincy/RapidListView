@@ -330,6 +330,10 @@ export default class RapidListView extends cc.Component {
         this.rapidScroll.scrollToIndex(index, time);
     }
 
+    addItem(index: number) {
+        this.rapidScroll.addItem(index);
+    }
+
     removeItem(index: number) {
         this.rapidScroll.removeItem(index);
     }

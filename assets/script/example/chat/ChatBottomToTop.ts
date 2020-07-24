@@ -18,25 +18,24 @@ export default class ChatBottomToTop extends cc.Component {
     @property(RapidListView)
     chatRapidListView: RapidListView = null;
 
-    // LIFE-CYCLE CALLBACKS:
+    private chatArray: any[];
 
     onLoad () {
         window.ChatBottom = this;
 
-
-        let chatArray = [];
-        while (chatArray.length < 50) {
+        this.chatArray = [];
+        while (this.chatArray.length < 50) {
 
             let data = {
-                type: chatArray.length % 5 === 0 && chatArray.length !== 0 ? ChatTargetType.TIME : this.getRandom(1, 2),
-                text: chatArray.length % 5 === 0 && chatArray.length !== 0 ? new Date().toLocaleTimeString() : CHAT_ARRAY[this.getRandom(0, CHAT_ARRAY.length - 1)]
+                type: this.chatArray.length % 5 === 0 && this.chatArray.length !== 0 ? ChatTargetType.TIME : this.getRandom(1, 2),
+                text: this.chatArray.length % 5 === 0 && this.chatArray.length !== 0 ? new Date().toLocaleTimeString() : CHAT_ARRAY[this.getRandom(0, CHAT_ARRAY.length - 1)]
             } as ChatData;
 
-            chatArray.push(data);
+            this.chatArray.push(data);
         }
-        chatArray[0].text = CHAT_ARRAY[5];
+        this.chatArray[0].text = CHAT_ARRAY[5];
         this.chatRapidListView.init(index => {
-            return chatArray[index];
+            return this.chatArray[index];
         });
     }
 
@@ -50,7 +49,18 @@ export default class ChatBottomToTop extends cc.Component {
     }
 
     onBtnToBottom() {
-        this.chatRapidListView.rapidScroll.scrollToOffset(1, 0.5);
+        this.chatRapidListView.scrollToOffset(1, 0.5);
+    }
+
+    onBtnAddNewMsg() {
+        let ran = this.getRandom(0, 5);
+        let data = {
+            type: ran % 5 === 0 ? ChatTargetType.TIME : this.getRandom(1, 2),
+            text: ran % 5 === 0 ? new Date().toLocaleTimeString() : CHAT_ARRAY[this.getRandom(0, CHAT_ARRAY.length - 1)]
+        } as ChatData;
+
+        this.chatArray.splice(0, 0, data);
+        this.chatRapidListView.addItem(0);
     }
 
     // update (dt) {}
