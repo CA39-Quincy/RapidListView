@@ -48,8 +48,12 @@ export default class ChatBottomToTop extends cc.Component {
         return Math.floor((Math.random() * (max - min + 1) + min));
     }
 
+    onBtnToTop() {
+        this.chatRapidListView.scrollToOffset(1, 1);
+    }
+
     onBtnToBottom() {
-        this.chatRapidListView.scrollToOffset(1, 0.5);
+        this.chatRapidListView.scrollToOffset(0, 1);
     }
 
     onBtnAddNewMsg() {

@@ -7,7 +7,18 @@
   ],
   "design-resolution-height": 640,
   "design-resolution-width": 960,
-  "excluded-modules": [],
+  "excluded-modules": [
+    "TiledMap",
+    "VideoPlayer",
+    "WebView",
+    "Physics",
+    "StudioComponent",
+    "Intersection",
+    "Native Socket",
+    "Geom Utils",
+    "3D",
+    "3D Primitive"
+  ],
   "facebook": {
     "appID": "",
     "audience": {
