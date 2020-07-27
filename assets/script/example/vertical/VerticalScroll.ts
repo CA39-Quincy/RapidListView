@@ -37,12 +37,14 @@ export default class VerticalScroll extends cc.Component {
         }
 
         this.rapidListView3.init();
-    }
 
-    onEnable() {
         this.rapidListView1.updateView(50, 0);
         this.rapidListView2.updateView(198, 0);
         this.rapidListView3.updateView(50, 0);
+    }
+
+    onEnable() {
+
     }
 
     // update (dt) {}

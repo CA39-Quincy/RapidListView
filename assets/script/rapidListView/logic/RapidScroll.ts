@@ -39,10 +39,6 @@ export default class RapidScroll extends RapidBase {
 
     onDisable() {
         this.node.off("scrolling", this.onRollEvent, this);
-
-        for (let i in this.showItemMap) {
-            this.itemHide(i);
-        }
     }
 
     private initLayout() {

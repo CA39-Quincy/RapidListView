@@ -19,6 +19,10 @@ export default class RapidData extends RapidBase {
         this.layout = this.content.getComponent(cc.Layout);
     }
 
+    onDestroy() {
+        cc.log("onDestroy RapidData")
+    }
+
     updateDataArray(itemCount: number) {
         this.itemCount = itemCount;
         this.layoutData = {} as RapidLayoutData;

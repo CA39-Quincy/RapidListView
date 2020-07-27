@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "ChatBottomToTop",
+    "_name": "Chat",
     "_objFlags": 0,
     "_parent": null,
     "_children": [

@@ -10,6 +10,10 @@ export default class RapidItemBase extends cc.Component {
     private sizeChangeCallFunc: (index: number, itemSize: cc.Size) => {} = null;
     private itemEventCallFunc: (eventName: any, data: any) => {} = null;
 
+    onDestroy() {
+        this.hide();
+    }
+
     private initLayerArray() {
         if (this.layerArray.length > 0) {
             return;
@@ -65,10 +69,10 @@ export default class RapidItemBase extends cc.Component {
 
     /**
      * @override
-     * 作为单个item被移除时播放的动画效果
+     * item被移除时播放的动画效果
      * @returns {Promise<any>}
      */
-    removeAnimation() {
+    removeAnimation(): Promise<any> {
         return new Promise(resolve => {
             this.layerArray.forEach(element => {
                 element.active = false;
@@ -77,19 +81,30 @@ export default class RapidItemBase extends cc.Component {
         })
     }
 
-    addAnimation() {
+    /**
+     * @override
+     * item被添加时播放的动画效果
+     * @returns {Promise<any>}
+     */
+    addAnimation(): Promise<any> {
         return new Promise(resolve => {
             resolve();
         })
     }
 
-    changeIndexAnimation() {
+    /**
+     * @override
+     * 当有item被添加删除是，当前item播放的动画效果
+     * @returns {Promise<any>}
+     */
+    changeIndexAnimation(): Promise<any> {
         return new Promise(resolve => {
             this.updatePosition();
             resolve();
         })
     }
 
+    // 更新每一层的坐标
     updatePosition() {
         for (let i = 0; i < this.layerArray.length; i++) {
             let node = i === 0 ? this.node : this.layerArray[i];
@@ -97,6 +112,7 @@ export default class RapidItemBase extends cc.Component {
         }
     }
 
+    // 获取item分层的层数
     getLayerCount(): number {
         return this.node.childrenCount;
     }
@@ -105,10 +121,12 @@ export default class RapidItemBase extends cc.Component {
         this.node.getPosition();
     }
 
+    // 获取当前item数组下标index
     getIndex(): number {
         return this.rapidItemData.index;
     }
 
+    //添加item宽高改变的事件监听
     addListenSizeChange(callFunc: Function) {
         this.sizeChangeCallFunc = callFunc;
     }

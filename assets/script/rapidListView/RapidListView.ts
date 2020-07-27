@@ -1,7 +1,7 @@
 import RapidScroll from "./logic/RapidScroll";
 import RapidData from "./logic/RapidData";
 import RapidNodePool from "./logic/RapidNodePool";
-import {RapidItemTemplateType, RapidRollDirection, RapidToPositionType} from "./enum/RapidEnum";
+import {RapidItemTemplateType, RapidRollDirection} from "./enum/RapidEnum";
 import RapidItemBase from "./base/RapidItemBase";
 
 const {ccclass, property} = cc._decorator;
@@ -179,7 +179,6 @@ export default class RapidListView extends cc.Component {
     public rapidScroll: RapidScroll;
     public rapidData: RapidData;
     public rapidNodePool: RapidNodePool;
-
 
     private checkAddLayout() {
         let content = this.node.getComponent(cc.ScrollView).content;

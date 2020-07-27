@@ -13,6 +13,8 @@ export default class RapidNodePool extends RapidBase {
     }
 
     onDestroy() {
+        cc.log("onDestroy RapidNodePool")
+
         this.itemNodePool.clear();
     }
 
@@ -29,5 +31,9 @@ export default class RapidNodePool extends RapidBase {
 
     put(node: cc.Node) {
         this.itemNodePool.put(node);
+    }
+
+    clear() {
+        this.itemNodePool.clear();
     }
 }
