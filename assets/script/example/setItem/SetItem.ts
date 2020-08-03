@@ -19,6 +19,8 @@ export default class SetItem extends RapidItemBase {
                 element.runAction(cc.sequence(
                     cc.scaleTo(0.2, 0),
                     cc.callFunc(() => {
+                        element.active = false;
+                        element.scale = 1;
                         ++actionIndex === this.layerArray.length && resolve();
                     })
                 ))

@@ -207,6 +207,8 @@ export default class RapidScroll extends RapidBase {
 
     addItem(index: number) {
         this.rapidListView.rapidData.addItemData(index);
+        this.rapidListView.unregisterTouchEvent();
+
         let keyArray = Object.keys(this.showItemMap);
         let key, changeIndex = 0, changeCount = 0;
 
@@ -227,6 +229,7 @@ export default class RapidScroll extends RapidBase {
                 })
             }
 
+            this.rapidListView.registerTouchEvent();
             this.setContentSize();
         };
 
@@ -249,6 +252,8 @@ export default class RapidScroll extends RapidBase {
 
     removeItem(index: number) {
         this.rapidListView.rapidData.removeItemData(index);
+        let changeIndex = 0, changeCount = 0;
+        this.rapidListView.unregisterTouchEvent();
 
         // 如果移除的item在视图内
         if (this.showItemMap[index]) {
@@ -263,8 +268,12 @@ export default class RapidScroll extends RapidBase {
                     }
 
                     this.showItemMap[index] = this.showItemMap[index + 1];
-                    this.showItemMap[index].changeIndexAnimation();
+                    this.showItemMap[index].changeIndexAnimation().then(() => {
+                        changeIndex++;
+                        changeIndex === changeCount && this.rapidListView.registerTouchEvent();
+                    });
 
+                    changeCount++;
                     index++;
                 }
             })
@@ -274,9 +283,13 @@ export default class RapidScroll extends RapidBase {
             for (i in this.showItemMap) {
                 i = Number(i);
                 this.showItemMap[i - 1] = this.showItemMap[i];
-                this.showItemMap[i].changeIndexAnimation();
-            }
+                this.showItemMap[i].changeIndexAnimation(() => {
+                    changeIndex++;
+                    changeIndex === changeCount && this.rapidListView.registerTouchEvent();
+                });
 
+                changeCount++;
+            }
 
             if (i < this.rapidListView.rapidData.getItemCount()) {
                 this.itemShow(i)

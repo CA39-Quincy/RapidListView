@@ -175,6 +175,7 @@ export default class RapidListView extends cc.Component {
 
     private itemEventCallFunc: (eventName: any, data: any) => {} = null;
     private getItemDataCallFunc: (index: number) => {} = null;
+    public view: cc.ScrollView | cc.PageView;
 
     public rapidScroll: RapidScroll;
     public rapidData: RapidData;
@@ -240,6 +241,7 @@ export default class RapidListView extends cc.Component {
     init(getItemDataCallFunc?: (index: number) => {}) {
         this.getItemDataCallFunc = getItemDataCallFunc;
         this.itemTemplateNode && (this.itemTemplateNode.active = false);
+        this.view = this.node.getComponent(cc.ScrollView);
 
         this.rapidData = this.node.addComponent(RapidData);
         this.rapidNodePool = this.node.addComponent(RapidNodePool);
@@ -308,6 +310,14 @@ export default class RapidListView extends cc.Component {
     // 是否自适应宽高
     getIsAdaptionSize(): boolean {
         return this.isAdaptionSize;
+    }
+
+    registerTouchEvent() {
+        this.view._registerEvent();
+    }
+
+    unregisterTouchEvent() {
+        this.view._unregisterEvent();
     }
 
     /**
